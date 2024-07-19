@@ -1,9 +1,115 @@
-import { Image, StyleSheet, Platform } from "react-native";
-
-import { HelloWave } from "@/components/HelloWave";
+import { Image, StyleSheet, Platform, SectionList } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+
+import Card from "@/components/Card";
+import WorkoutHistoryCard from "@/components/WorkoutCard";
+
+const date = new Date();
+const DATA = [
+  {
+    time: date,
+    duration: 10000,
+    calories: 340,
+    volume: 1000,
+    exercises: [
+      {
+        name: "Pushups",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        name: "Pullups",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    time: date,
+    duration: 10000,
+    calories: 340,
+    volume: 1000,
+    exercises: [
+      {
+        name: "Pushups",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        name: "Pullups",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    time: date,
+    duration: 10000,
+    calories: 340,
+    volume: 1000,
+    exercises: [
+      {
+        name: "Pushups",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        name: "Pullups",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ],
+  },
+];
 
 export default function HomeScreen() {
   return (
@@ -13,25 +119,19 @@ export default function HomeScreen() {
         <Image source={require("@/assets/images/partial-react-logo.png")} style={styles.reactLogo} />
       }
     >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: "cmd + d", android: "cmd + m" })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
+      <ThemedView>
+        {DATA.map((workout) => (
+          <WorkoutHistoryCard workout={workout} />
+        ))}
       </ThemedView>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  cardContainer: {
+    flex: 1,
+  },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",

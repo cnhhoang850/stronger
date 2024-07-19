@@ -8,7 +8,7 @@ export default function HomeLayout() {
         options={{
           headerShown: true,
           headerLargeTitle: true,
-          headerTitle: "Home",
+          headerTitle: "History",
         }}
       />
     </Stack>
