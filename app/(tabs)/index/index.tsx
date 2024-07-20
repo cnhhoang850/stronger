@@ -1,8 +1,6 @@
-import { Image, StyleSheet, Platform, SectionList } from "react-native";
+import { Image, StyleSheet,  } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
-
-import Card from "@/components/Card";
 import WorkoutHistoryCard from "@/components/WorkoutCard";
 
 const date = new Date();
