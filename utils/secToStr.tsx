@@ -1,4 +1,4 @@
-export default function formatTime(seconds: number): string {
+export default function formatDuration(seconds: number): string {
   if (seconds < 60) {
     return `${seconds}s`;
   }
@@ -32,13 +32,13 @@ export default function formatTime(seconds: number): string {
 }
 
 // Example usage:
-console.log(formatTime(45)); // "45s"
-console.log(formatTime(90)); // "1m"
-console.log(formatTime(3600)); // "1h"
-console.log(formatTime(3660)); // "1h 1m"
-console.log(formatTime(86400)); // "1d"
-console.log(formatTime(90000)); // "1d 1h"
-console.log(formatTime(2592000)); // "1mo"
-console.log(formatTime(2678400)); // "1mo 1d"
-console.log(formatTime(31536000)); // "1y"
-console.log(formatTime(31708800)); // "1y 1mo"
+console.log(formatDuration(45)); // "45s"
+console.log(formatDuration(90)); // "1m"
+console.log(formatDuration(3600)); // "1h"
+console.log(formatDuration(3660)); // "1h 1m"
+console.log(formatDuration(86400)); // "1d"
+console.log(formatDuration(90000)); // "1d 1h"
+console.log(formatDuration(2592000)); // "1mo"
+console.log(formatDuration(2678400)); // "1mo 1d"
+console.log(formatDuration(31536000)); // "1y"
+console.log(formatDuration(31708800)); // "1y 1mo"

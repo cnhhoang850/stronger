@@ -12,16 +12,11 @@ export type ThemedTextProps = TextProps & {
     | "defaultSemiTrans"
     | "subtitle"
     | "link"
-    | "subtitleSemiBold";
+    | "subtitleSemiBold"
+    | "menu";
 };
 
-export function ThemedText({
-  style,
-  lightColor,
-  darkColor,
-  type = "default",
-  ...rest
-}: ThemedTextProps) {
+export function ThemedText({ style, lightColor, darkColor, type = "default", ...rest }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
   return (
@@ -34,6 +29,7 @@ export function ThemedText({
         type === "defaultSemiTrans" ? styles.defaultSemiTrans : undefined,
         type === "subtitle" ? styles.subtitle : undefined,
         type === "link" ? styles.link : undefined,
+        type === "menu" ? styles.menu : undefined,
         type === "subtitleSemiBold" ? styles.subtitleSemiBold : undefined,
         style,
       ]}
@@ -100,5 +96,10 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.default,
     lineHeight: LINE_HEIGHTS.large,
     color: "#0a7ea4",
+  },
+  menu: {
+    fontSize: FONT_SIZES.medium,
+    lineHeight: LINE_HEIGHTS.default,
+    fontWeight: FONT_WEIGHTS.semiBold,
   },
 });

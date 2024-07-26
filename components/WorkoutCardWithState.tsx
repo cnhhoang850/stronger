@@ -1,19 +1,16 @@
-import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import getWorkoutTimeCategory from "@/utils/getDayPeriod";
 import formatDate from "@/utils/dateToStr";
 import formatDuration from "@/utils/secToStr";
-import { Card as PaperCard, Button as PaperButton } from "react-native-paper";
+import { Card as PaperCard } from "react-native-paper";
+import { Link } from "expo-router";
+
 import { ThemedText } from "@/components/ThemedText";
 import IconText from "@/components/IconText";
-import useStore from "@/store/useStore";
-import LinkButton from "@/components/LinkButton";
 
-function WorkoutHistoryCard({ workout }) {
-  const id = workout.id.toString();
-  const editWorkout = useStore((state) => state.updateWorkout);
+export default function WorkoutHistoryCard({ workout }) {
   return (
-    <PaperCard style={styles.cardContainer} mode="contained">
+    <PaperCard style={styles.cardContainer}>
       <PaperCard.Content>
         <View style={styles.headerContainer}>
           <View>
@@ -21,8 +18,7 @@ function WorkoutHistoryCard({ workout }) {
 
             <ThemedText type="subtitle">{formatDate(workout.time)}</ThemedText>
           </View>
-
-          <LinkButton path="/(tabs)/history/modal" params={{ id: id }} />
+          <Link href="/modal">...</Link>
         </View>
 
         <View style={styles.columnContainer}>
@@ -63,8 +59,6 @@ function WorkoutHistoryCard({ workout }) {
     </PaperCard>
   );
 }
-
-export default memo(WorkoutHistoryCard);
 
 const styles = StyleSheet.create({
   cardContainer: {

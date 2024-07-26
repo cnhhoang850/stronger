@@ -1,132 +1,48 @@
-import { Image, StyleSheet,  } from "react-native";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { useCallback } from "react";
+import { Image, StyleSheet, SectionList, useColorScheme } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 import WorkoutHistoryCard from "@/components/WorkoutCard";
-
-const date = new Date();
-const DATA = [
-  {
-    time: date,
-    duration: 10000,
-    calories: 340,
-    volume: 1000,
-    exercises: [
-      {
-        name: "Pushups",
-        sets: [
-          {
-            reps: 10,
-            weight: 100,
-          },
-          {
-            reps: 10,
-            weight: 100,
-          },
-        ],
-      },
-      {
-        name: "Pullups",
-        sets: [
-          {
-            reps: 10,
-            weight: 100,
-          },
-          {
-            reps: 10,
-            weight: 100,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    time: date,
-    duration: 10000,
-    calories: 340,
-    volume: 1000,
-    exercises: [
-      {
-        name: "Pushups",
-        sets: [
-          {
-            reps: 10,
-            weight: 100,
-          },
-          {
-            reps: 10,
-            weight: 100,
-          },
-        ],
-      },
-      {
-        name: "Pullups",
-        sets: [
-          {
-            reps: 10,
-            weight: 100,
-          },
-          {
-            reps: 10,
-            weight: 100,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    time: date,
-    duration: 10000,
-    calories: 340,
-    volume: 1000,
-    exercises: [
-      {
-        name: "Pushups",
-        sets: [
-          {
-            reps: 10,
-            weight: 100,
-          },
-          {
-            reps: 10,
-            weight: 100,
-          },
-        ],
-      },
-      {
-        name: "Pullups",
-        sets: [
-          {
-            reps: 10,
-            weight: 100,
-          },
-          {
-            reps: 10,
-            weight: 100,
-          },
-        ],
-      },
-    ],
-  },
-];
+import storage from "@/store/LocalStore";
+import useStore from "@/store/useStore";
 
 export default function HomeScreen() {
+  const workouts = useStore((state) => state.workouts);
+  const groupedWorkouts = groupWorkoutsByMonth(workouts);
+
+  const renderItem = useCallback(({ item }) => {
+    return <WorkoutHistoryCard workout={item} />;
+  }, []);
+
+  storage.clearAll();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image source={require("@/assets/images/partial-react-logo.png")} style={styles.reactLogo} />
-      }
-    >
-      <ThemedView>
-        {DATA.map((workout) => (
-          <WorkoutHistoryCard workout={workout} />
-        ))}
-      </ThemedView>
-    </ParallaxScrollView>
+    <ThemedView style={styles.sectionListContainer}>
+      <SectionList
+        sections={groupedWorkouts}
+        keyExtractor={(item, index) => item + index}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <ThemedView style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}>
+            <ThemedText type="subtitle">{title}</ThemedText>
+          </ThemedView>
+        )}
+        contentInsetAdjustmentBehavior="automatic"
+        stickySectionHeadersEnabled={true}
+        initialNumToRender={6}
+      />
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
+  sectionListContainer: {
+    flex: 1,
+    margin: 0,
+    paddingTop: 96,
+    paddingBottom: 0,
+    overflow: "hidden",
+  },
   cardContainer: {
     flex: 1,
   },
@@ -147,3 +63,27 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 });
+
+function groupWorkoutsByMonth(workouts) {
+  const groupedWorkouts = {};
+
+  workouts.forEach((workout) => {
+    if (!workout) return;
+
+    const date = new Date(workout.time);
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+    const monthYear = `${month} ${year}`;
+
+    if (!groupedWorkouts[monthYear]) {
+      groupedWorkouts[monthYear] = [];
+    }
+
+    groupedWorkouts[monthYear].push(workout);
+  });
+
+  return Object.keys(groupedWorkouts).map((key) => ({
+    title: key,
+    data: groupedWorkouts[key],
+  }));
+}

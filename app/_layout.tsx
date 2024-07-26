@@ -5,8 +5,10 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
+import { Colors } from "@/constants/Colors";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useTheme } from "react-native-paper";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -31,11 +33,11 @@ const paperTheme = {
     onError: "rgb(255, 255, 255)",
     errorContainer: "rgb(255, 218, 214)",
     onErrorContainer: "rgb(65, 0, 2)",
-    background: "rgb(255, 255, 255)",
+    background: "#F2F2F7",
     onBackground: "rgb(26, 28, 30)",
     surface: "rgb(253, 252, 255)",
     onSurface: "rgb(26, 28, 30)",
-    surfaceVariant: "rgb(224, 226, 236)",
+    surfaceVariant: "rgb(255, 255, 255)",
     onSurfaceVariant: "rgb(67, 71, 78)",
     outline: "rgb(116, 119, 127)",
     outlineVariant: "rgb(195, 198, 207)",
@@ -105,6 +107,7 @@ const darkPaperTheme = {
 };
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { colors } = useTheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -120,13 +123,21 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </PaperProvider>
-    </ThemeProvider>
+    <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+          headerLargeTitleShadowVisible: false,
+        }}
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+    </PaperProvider>
   );
 }
