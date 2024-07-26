@@ -123,21 +123,23 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-          headerLargeTitleShadowVisible: false,
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </PaperProvider>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: colors.background,
+            },
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+            headerLargeTitleShadowVisible: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </PaperProvider>
+    </ThemeProvider>
   );
 }
