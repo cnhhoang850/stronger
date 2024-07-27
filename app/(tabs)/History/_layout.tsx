@@ -24,7 +24,10 @@ export default function HomeLayout() {
           headerTitle: "History",
         }}
       />
-      <Stack.Screen name="modal" options={{ title: "Edit workout", presentation: "modal" }} />
+      <Stack.Screen
+        name="modal"
+        options={{ title: "Edit workout", presentation: "modal" }}
+      />
     </Stack>
   );
 }

@@ -1,40 +1,59 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback, memo } from "react";
 import { StyleSheet, View, TextInput, Button } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
 
-export default function ExerciseDataTable({ exercise }) {
-  const theme = useTheme();
+const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
   const [sets, setSets] = useState(exercise.sets);
+  const theme = useTheme();
+  const lastSetRef = useRef(null);
 
-  const handleInputChange = (index, field, value) => {
-    const newSets = [...sets];
-    const cleanedValue = value.replace(/[^0-9.]/g, ""); // Remove all non-numeric characters
-    const parsedValue = parseFloat(cleanedValue);
-    if (!isNaN(parsedValue)) {
-      newSets[index][field] = parsedValue; // Allow empty strings for clearing the field
-      setSets(newSets);
-    } else {
-      newSets[index][field] = "";
-      setSets(newSets);
-    }
-  };
+  const handleInputChange = useCallback((index, field, value) => {
+    setSets((prevSets) => {
+      const newSets = [...prevSets];
+      const cleanedValue = value.replace(/[^0-9.]/g, ""); // Remove all non-numeric characters
+      const parsedValue = parseFloat(cleanedValue);
+      if (!isNaN(parsedValue)) {
+        newSets[index][field] = parsedValue; // Allow empty strings for clearing the field
+      } else {
+        newSets[index][field] = "";
+      }
+      return newSets;
+    });
+  }, []);
 
   const addSet = () => {
     const newSet = { weight: 0, reps: 0, volume: 0, calories: 0 };
-    setSets([...sets, newSet]);
+    setSets((prevSets) => [...prevSets, newSet]);
+    setTimeout(() => {
+      lastSetRef.current?.measureLayout(scrollViewRef.current, (x, y) => {
+        scrollViewRef.current.scrollTo({ y: y - 600, animated: true });
+      });
+    }, 10);
+  };
+
+  const onFocus = () => {
+    setTimeout(() => {
+      lastSetRef.current?.measureLayout(scrollViewRef.current, (x, y) => {
+        scrollViewRef.current.scrollTo({ y: y + 300, animated: true });
+      });
+    }, 100);
   };
 
   return (
     <View>
       <View style={styles.columnContainer}>
         <View style={styles.entryColumn}>
-          <ThemedText style={{ marginBottom: 4 }} type="menu">
+          <ThemedText style={styles.headerText} type="menu">
             {"Weight"}
           </ThemedText>
 
           {sets.map((set, index) => (
-            <View style={styles.inputRow} key={index}>
+            <View
+              style={styles.inputRow}
+              key={index}
+              ref={index === sets.length - 1 ? lastSetRef : null}
+            >
               <TextInput
                 style={styles.input}
                 value={set.weight.toString()}
@@ -42,6 +61,7 @@ export default function ExerciseDataTable({ exercise }) {
                 keyboardType="numeric"
                 selectTextOnFocus={true}
                 maxLength={4} // Limit input to 4 digits
+                onFocus={onFocus}
               />
               <ThemedText style={styles.inputUnit}>kg</ThemedText>
             </View>
@@ -49,12 +69,16 @@ export default function ExerciseDataTable({ exercise }) {
         </View>
 
         <View style={styles.entryColumn}>
-          <ThemedText style={{ marginBottom: 4 }} type="menu">
+          <ThemedText style={styles.headerText} type="menu">
             {"Reps"}
           </ThemedText>
 
           {sets.map((set, index) => (
-            <View style={styles.inputRow} key={index}>
+            <View
+              style={styles.inputRow}
+              key={index}
+              ref={index === sets.length - 1 ? lastSetRef : null}
+            >
               <TextInput
                 style={styles.input}
                 value={set.reps.toString()}
@@ -62,13 +86,14 @@ export default function ExerciseDataTable({ exercise }) {
                 keyboardType="numeric"
                 selectTextOnFocus={true}
                 maxLength={3} // Limit input to 3 digits
+                onFocus={onFocus}
               />
             </View>
           ))}
         </View>
 
         <View style={styles.entryColumn}>
-          <ThemedText style={{ marginBottom: 4 }} type="menu">
+          <ThemedText style={styles.headerText} type="menu">
             {"Volume"}
           </ThemedText>
 
@@ -92,7 +117,7 @@ export default function ExerciseDataTable({ exercise }) {
         </View>
 
         <View style={styles.entryColumn}>
-          <ThemedText style={{ marginBottom: 4 }} type="menu">
+          <ThemedText style={styles.headerText} type="menu">
             {"Calories"}
           </ThemedText>
 
@@ -118,11 +143,12 @@ export default function ExerciseDataTable({ exercise }) {
       <Button title="+ Add set" onPress={addSet} />
     </View>
   );
-}
+};
+
+export default memo(ExerciseDataTable);
 
 const styles = StyleSheet.create({
   columnContainer: {
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 8,
@@ -131,7 +157,6 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   entryColumn: {
-    display: "flex",
     paddingBottom: 0,
     marginBottom: -12,
   },
@@ -152,5 +177,8 @@ const styles = StyleSheet.create({
   },
   inputUnit: {
     marginLeft: 4,
+  },
+  headerText: {
+    marginBottom: 4,
   },
 });

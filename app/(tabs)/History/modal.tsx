@@ -26,7 +26,7 @@ export default function EditModal() {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ThemedView style={styles.modalContent}>
-        <KeyboardAwareScrollView extraHeight={220}>
+        <ScrollView ref={scrollViewRef}>
           <SettingCard workout={workout} />
 
           {workout.exercises.map((exercise, index) => (
@@ -38,13 +38,16 @@ export default function EditModal() {
               </View>
 
               <PaperCard mode="contained" style={styles.cardContainer}>
-                <ExerciseDataTable scrollViewRef={scrollViewRef} exercise={exercise} />
+                <ExerciseDataTable
+                  scrollViewRef={scrollViewRef}
+                  exercise={exercise}
+                />
               </PaperCard>
             </View>
           ))}
 
-          <View style={{ paddingBottom: 200 }}></View>
-        </KeyboardAwareScrollView>
+          <View style={{ paddingBottom: 300 }}></View>
+        </ScrollView>
       </ThemedView>
     </TouchableWithoutFeedback>
   );
