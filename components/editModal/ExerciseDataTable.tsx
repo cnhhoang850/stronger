@@ -3,26 +3,29 @@ import { StyleSheet, View, TextInput, Button } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
 
-const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
+const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) => {
   const [sets, setSets] = useState(exercise.sets);
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const theme = useTheme();
   const lastSetRef = useRef(null);
-  const textInputRef = useRef([]);
 
-  const handleInputChange = useCallback((index, field, value) => {
-    setSets((prevSets) => {
-      const newSets = [...prevSets];
-      const cleanedValue = value.replace(/[^0-9.]/g, ""); // Remove all non-numeric characters
-      const parsedValue = parseFloat(cleanedValue);
-      if (!isNaN(parsedValue)) {
-        newSets[index][field] = parsedValue; // Allow empty strings for clearing the field
-      } else {
-        newSets[index][field] = "";
-      }
-      return newSets;
-    });
-  }, []);
+  const handleInputChange = useCallback(
+    (index, field, value) => {
+      setSets((prevSets) => {
+        const newSets = [...prevSets];
+        const cleanedValue = value.replace(/[^0-9.]/g, ""); // Remove all non-numeric characters
+        const parsedValue = parseFloat(cleanedValue);
+        if (!isNaN(parsedValue)) {
+          newSets[index][field] = parsedValue; // Allow empty strings for clearing the field
+        } else {
+          newSets[index][field] = "";
+        }
+        return newSets;
+      });
+      onFormChange();
+    },
+    [onFormChange],
+  );
 
   const handleFocus = (index) => {
     setFocusedInputIndex(index);
@@ -35,7 +38,8 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
   const addSet = () => {
     const newSet = { weight: 0, reps: 0, volume: 0, calories: 0 };
     setSets((prevSets) => [...prevSets, newSet]);
-    scrollViewRef.current.scrollToPosition(0, scrollY + 70);
+    scrollViewRef.current.scrollToPosition(0, scrollY + 30);
+    onFormChange();
   };
 
   return (
@@ -150,9 +154,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
           ))}
         </View>
       </View>
-      <View>
-        <Button title="+ Add set" onPress={addSet} />
-      </View>
+      <Button title="+ Add set" onPress={addSet} />
     </View>
   );
 };
