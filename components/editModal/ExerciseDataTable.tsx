@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback, memo } from "react";
-import { StyleSheet, View, TextInput, Button } from "react-native";
+import { StyleSheet, View, TextInput, Button, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
 
-const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
+const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
   const [sets, setSets] = useState(exercise.sets);
   const theme = useTheme();
   const lastSetRef = useRef(null);
@@ -26,11 +26,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
   const addSet = () => {
     const newSet = { weight: 0, reps: 0, volume: 0, calories: 0 };
     setSets((prevSets) => [...prevSets, newSet]);
-    setTimeout(() => {
-      lastSetRef.current?.measureLayout(scrollViewRef.current, (x, y) => {
-        scrollViewRef.current.scrollTo({ y: y - 200, animated: true });
-      });
-    }, 10);
+    scrollViewRef.current.scrollToPosition(0, scrollY + 70);
   };
 
   return (
@@ -42,18 +38,15 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
           </ThemedText>
 
           {sets.map((set, index) => (
-            <View
-              style={styles.inputRow}
-              key={index}
-              ref={index === sets.length - 1 ? lastSetRef : null}
-            >
+            <View style={styles.inputRow} key={index} ref={index === sets.length - 1 ? lastSetRef : null}>
               <TextInput
                 style={styles.input}
                 value={set.weight.toString()}
                 onChangeText={(text) => handleInputChange(index, "weight", text)}
                 keyboardType="numeric"
                 selectTextOnFocus={true}
-                maxLength={4} // Limit input to 4 digits
+                maxLength={3} // Limit input to 4 digit
+                textAlign="center"
               />
               <ThemedText style={styles.inputUnit}>kg</ThemedText>
             </View>
@@ -66,11 +59,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
           </ThemedText>
 
           {sets.map((set, index) => (
-            <View
-              style={styles.inputRow}
-              key={index}
-              ref={index === sets.length - 1 ? lastSetRef : null}
-            >
+            <View style={styles.inputRow} key={index} ref={index === sets.length - 1 ? lastSetRef : null}>
               <TextInput
                 style={styles.input}
                 value={set.reps.toString()}
@@ -78,6 +67,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
                 keyboardType="numeric"
                 selectTextOnFocus={true}
                 maxLength={3} // Limit input to 3 digits
+                textAlign="center"
               />
             </View>
           ))}
@@ -131,7 +121,9 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
           ))}
         </View>
       </View>
-      <Button title="+ Add set" onPress={addSet} />
+      <View>
+        <Button title="+ Add set" onPress={addSet} />
+      </View>
     </View>
   );
 };
@@ -159,12 +151,11 @@ const styles = StyleSheet.create({
   },
   input: {
     width: 36, // Fixed width for text input
-    borderColor: "gray",
-    borderWidth: 0.2,
+    height: 24,
     backgroundColor: "#f0f0f0",
-    paddingLeft: 8,
     borderRadius: 4,
     textAlign: "left",
+    fontSize: 16,
   },
   inputUnit: {
     marginLeft: 4,

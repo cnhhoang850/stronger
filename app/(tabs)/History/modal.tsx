@@ -18,49 +18,51 @@ import { useLocalSearchParams } from "expo-router";
 import SettingCard from "@/components/editModal/SettingCard";
 import ExerciseDataTable from "@/components/editModal/ExerciseDataTable";
 import KeyboardAwareHOC from "@/components/KeyboardAwareScrollView";
+import { DarkTheme } from "@react-navigation/native";
 
 export default function EditModal() {
   const { id } = useLocalSearchParams();
   const workout = useStore((state) => state.getWorkout(id));
-  const editWorkout = useStore((state) => state.updateWorkout);
   const scrollViewRef = useRef(null);
+  const [scrollY, setScrollY] = useState(0);
 
   return (
-    <ScrollView ref={scrollViewRef}>
+    <ThemedView style={styles.modalContent}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <ThemedView style={styles.modalContent}>
-          <KeyboardAwareScrollView>
-            <SettingCard workout={workout} />
+        <KeyboardAwareScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={{ flexGrow: 1 }}
+          enableResetScrollToCoords={false}
+          onMomentumScrollEnd={(event) => {
+            console.log(event.nativeEvent);
+            setScrollY(event.nativeEvent.contentOffset.y);
+          }}
+        >
+          <SettingCard workout={workout} />
 
-            {workout.exercises.map((exercise, index) => (
-              <View key={index}>
-                <View style={{ paddingLeft: 12, paddingBottom: 4 }}>
-                  <ThemedText
-                    style={{ opacity: 0.7, fontSize: 14 }}
-                    type="default"
-                  >
-                    {exercise.name.toUpperCase()}
-                  </ThemedText>
-                </View>
-
-                <PaperCard mode="contained" style={styles.cardContainer}>
-                  <ExerciseDataTable
-                    scrollViewRef={scrollViewRef}
-                    exercise={exercise}
-                  />
-                </PaperCard>
+          {workout.exercises.map((exercise, index) => (
+            <View key={index}>
+              <View style={{ paddingLeft: 12, paddingBottom: 4 }}>
+                <ThemedText style={{ opacity: 0.7, fontSize: 14 }} type="default">
+                  {exercise.name.toUpperCase()}
+                </ThemedText>
               </View>
-            ))}
 
-            <View
-              style={{
-                flex: 1,
-              }}
-            ></View>
-          </KeyboardAwareScrollView>
-        </ThemedView>
+              <PaperCard mode="contained" style={styles.cardContainer}>
+                <ExerciseDataTable scrollY={scrollY} scrollViewRef={scrollViewRef} exercise={exercise} />
+              </PaperCard>
+            </View>
+          ))}
+
+          <View
+            style={{
+              flex: 1,
+              paddingBottom: 200,
+            }}
+          ></View>
+        </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
-    </ScrollView>
+    </ThemedView>
   );
 }
 
