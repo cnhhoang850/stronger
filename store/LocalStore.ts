@@ -1,4 +1,4 @@
-import { MMKV, Mode } from "react-native-mmkv";
+import { MMKV } from "react-native-mmkv";
 
 const storage = new MMKV();
 
@@ -78,7 +78,7 @@ const mockWorkout = {
   ],
 };
 
-function sleep(milliseconds: number) {
+function sleep(milliseconds) {
   const start = new Date().getTime();
   while (new Date().getTime() - start < milliseconds) {}
 }
@@ -93,7 +93,16 @@ for (let i = 0; i < 12; i++) {
     blockingSetTimeout(() => {
       let now = Date.now() + i * 2629000000;
       let timeInSec = now.toString();
-      let timeWorkout = { ...mockWorkout, time: timeInSec, id: timeInSec };
+
+      // Create a deep copy of the mockWorkout to avoid mutating the original object
+      let workoutCopy = JSON.parse(JSON.stringify(mockWorkout));
+
+      // Add unique IDs to each exercise
+      workoutCopy.exercises.forEach((exercise, index) => {
+        exercise.id = (now + index * 1000).toString();
+      });
+
+      let timeWorkout = { ...workoutCopy, time: timeInSec, id: timeInSec };
       storage.set(timeInSec, JSON.stringify(timeWorkout));
     }, 10);
   }

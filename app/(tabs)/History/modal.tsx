@@ -28,9 +28,13 @@ export default function EditModal() {
           onPress={() => handleSave()}
           style={{
             backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
+            height: 36,
+            marginTop: 4,
           }}
         >
-          <ThemedText>Save</ThemedText>
+          <ThemedText type="default" style={{ color: theme.colors.onPrimary, fontSize: 16, lineHeight: 16 }}>
+            Save
+          </ThemedText>
         </PaperButton>
       ),
     });
@@ -45,42 +49,44 @@ export default function EditModal() {
   };
 
   return (
-    <KeyboardAwareScrollView
-      ref={scrollViewRef}
-      enableResetScrollToCoords={false}
-      keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
-      keyboardShouldPersistTaps="handled"
-      onScrollEndDrag={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
-      onMomentumScrollEnd={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
-      extraScrollHeight={50}
-    >
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <ThemedView style={styles.modalContent}>
-          <SettingCard workout={workout} onFormChange={handleFormChange} />
+    <ThemedView>
+      <KeyboardAwareScrollView
+        ref={scrollViewRef}
+        enableResetScrollToCoords={false}
+        keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
+        keyboardShouldPersistTaps="handled"
+        onScrollEndDrag={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
+        onMomentumScrollEnd={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
+        extraScrollHeight={50}
+      >
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <ThemedView style={styles.modalContent}>
+            <SettingCard workout={workout} onFormChange={handleFormChange} />
 
-          {workout.exercises.map((exercise, index) => (
-            <View key={index}>
-              <View style={{ paddingLeft: 12, paddingBottom: 4 }}>
-                <ThemedText style={{ opacity: 0.7, fontSize: 14 }} type="default">
-                  {exercise.name.toUpperCase()}
-                </ThemedText>
+            {workout.exercises.map((exercise, index) => (
+              <View key={index}>
+                <View style={{ paddingLeft: 12, paddingBottom: 4 }}>
+                  <ThemedText style={{ opacity: 0.7, fontSize: 14 }} type="default">
+                    {exercise.name.toUpperCase()}
+                  </ThemedText>
+                </View>
+
+                <PaperCard mode="contained" style={styles.cardContainer}>
+                  <ExerciseDataTable
+                    scrollY={scrollY}
+                    scrollViewRef={scrollViewRef}
+                    exercise={exercise}
+                    onFormChange={handleFormChange}
+                  />
+                </PaperCard>
               </View>
+            ))}
 
-              <PaperCard mode="contained" style={styles.cardContainer}>
-                <ExerciseDataTable
-                  scrollY={scrollY}
-                  scrollViewRef={scrollViewRef}
-                  exercise={exercise}
-                  onFormChange={handleFormChange}
-                />
-              </PaperCard>
-            </View>
-          ))}
-
-          <View style={{ flex: 1, paddingBottom: 200 }}></View>
-        </ThemedView>
-      </TouchableWithoutFeedback>
-    </KeyboardAwareScrollView>
+            <View style={{ flex: 1, paddingBottom: 200 }}></View>
+          </ThemedView>
+        </TouchableWithoutFeedback>
+      </KeyboardAwareScrollView>
+    </ThemedView>
   );
 }
 

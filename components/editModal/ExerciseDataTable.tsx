@@ -22,6 +22,10 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
         }
         return newSets;
       });
+      const updatedExercise = {
+        ...exercise,
+        sets: sets,
+      };
       onFormChange();
     },
     [onFormChange],
