@@ -1,10 +1,11 @@
 import React, { useState, useRef, useCallback, memo } from "react";
-import { StyleSheet, View, TextInput, Button, Dimensions } from "react-native";
+import { StyleSheet, View, TextInput, Button } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
 
 const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
   const [sets, setSets] = useState(exercise.sets);
+  const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const theme = useTheme();
   const lastSetRef = useRef(null);
   const textInputRef = useRef([]);
@@ -23,6 +24,14 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
     });
   }, []);
 
+  const handleFocus = (index) => {
+    setFocusedInputIndex(index);
+  };
+
+  const handleBlur = () => {
+    setFocusedInputIndex(null);
+  };
+
   const addSet = () => {
     const newSet = { weight: 0, reps: 0, volume: 0, calories: 0 };
     setSets((prevSets) => [...prevSets, newSet]);
@@ -40,13 +49,23 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
           {sets.map((set, index) => (
             <View style={styles.inputRow} key={index} ref={index === sets.length - 1 ? lastSetRef : null}>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  focusedInputIndex === index && styles.focusedInput,
+                  {
+                    backgroundColor: theme.colors.background,
+                    color: theme.colors.onSurface,
+                    borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
+                  },
+                ]}
                 value={set.weight.toString()}
                 onChangeText={(text) => handleInputChange(index, "weight", text)}
                 keyboardType="numeric"
                 selectTextOnFocus={true}
-                maxLength={3} // Limit input to 4 digit
+                maxLength={3}
                 textAlign="center"
+                onFocus={() => handleFocus(index)}
+                onBlur={handleBlur}
               />
               <ThemedText style={styles.inputUnit}>kg</ThemedText>
             </View>
@@ -61,13 +80,23 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
           {sets.map((set, index) => (
             <View style={styles.inputRow} key={index} ref={index === sets.length - 1 ? lastSetRef : null}>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  focusedInputIndex === index && styles.focusedInput,
+                  {
+                    backgroundColor: theme.colors.background,
+                    color: theme.colors.onSurface,
+                    borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
+                  },
+                ]}
                 value={set.reps.toString()}
                 onChangeText={(text) => handleInputChange(index, "reps", text)}
                 keyboardType="numeric"
                 selectTextOnFocus={true}
                 maxLength={3} // Limit input to 3 digits
                 textAlign="center"
+                onFocus={() => handleFocus(index)}
+                onBlur={handleBlur}
               />
             </View>
           ))}
@@ -84,7 +113,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: theme.colors.surfaceVariant,
+                    backgroundColor: theme.colors.background,
                     color: theme.colors.onSurface,
                     borderWidth: 0,
                   },
@@ -108,7 +137,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY }) => {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: theme.colors.surfaceVariant,
+                    backgroundColor: theme.colors.background,
                     color: theme.colors.onSurface,
                     borderWidth: 0,
                   },
@@ -156,6 +185,13 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     textAlign: "left",
     fontSize: 16,
+    borderWidth: 2,
+    padding: 2,
+  },
+  focusedInput: {
+    borderWidth: 2,
+    padding: 2,
+    borderStyle: "solid",
   },
   inputUnit: {
     marginLeft: 4,

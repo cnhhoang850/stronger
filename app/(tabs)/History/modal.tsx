@@ -33,8 +33,12 @@ export default function EditModal() {
           ref={scrollViewRef}
           contentContainerStyle={{ flexGrow: 1 }}
           enableResetScrollToCoords={false}
+          keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
+          keyboardShouldPersistTaps="handled"
+          onScrollEndDrag={(event) => {
+            setScrollY(event.nativeEvent.contentOffset.y);
+          }}
           onMomentumScrollEnd={(event) => {
-            console.log(event.nativeEvent);
             setScrollY(event.nativeEvent.contentOffset.y);
           }}
         >

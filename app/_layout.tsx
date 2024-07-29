@@ -63,7 +63,7 @@ const paperTheme = {
 const darkPaperTheme = {
   ...DefaultPaperTheme,
   colors: {
-    primary: "rgb(165, 200, 255)",
+    primary: "rgb(190, 215, 255)",
     onPrimary: "rgb(0, 49, 95)",
     primaryContainer: "rgb(0, 71, 134)",
     onPrimaryContainer: "rgb(212, 227, 255)",
