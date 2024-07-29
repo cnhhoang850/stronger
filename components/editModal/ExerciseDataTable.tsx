@@ -7,6 +7,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
   const [sets, setSets] = useState(exercise.sets);
   const theme = useTheme();
   const lastSetRef = useRef(null);
+  const textInputRef = useRef([]);
 
   const handleInputChange = useCallback((index, field, value) => {
     setSets((prevSets) => {
@@ -27,17 +28,9 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
     setSets((prevSets) => [...prevSets, newSet]);
     setTimeout(() => {
       lastSetRef.current?.measureLayout(scrollViewRef.current, (x, y) => {
-        scrollViewRef.current.scrollTo({ y: y - 600, animated: true });
+        scrollViewRef.current.scrollTo({ y: y - 200, animated: true });
       });
     }, 10);
-  };
-
-  const onFocus = () => {
-    setTimeout(() => {
-      lastSetRef.current?.measureLayout(scrollViewRef.current, (x, y) => {
-        scrollViewRef.current.scrollTo({ y: y + 300, animated: true });
-      });
-    }, 100);
   };
 
   return (
@@ -61,7 +54,6 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
                 keyboardType="numeric"
                 selectTextOnFocus={true}
                 maxLength={4} // Limit input to 4 digits
-                onFocus={onFocus}
               />
               <ThemedText style={styles.inputUnit}>kg</ThemedText>
             </View>
@@ -86,7 +78,6 @@ const ExerciseDataTable = ({ exercise, scrollViewRef }) => {
                 keyboardType="numeric"
                 selectTextOnFocus={true}
                 maxLength={3} // Limit input to 3 digits
-                onFocus={onFocus}
               />
             </View>
           ))}

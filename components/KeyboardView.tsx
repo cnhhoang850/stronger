@@ -8,7 +8,7 @@ export type ThemedViewProps = ViewProps & {
   darkColor?: string;
 };
 
-export function ThemedView({
+export function ThemedKeyboardAvoidingView({
   style,
   lightColor,
   darkColor,
@@ -18,8 +18,16 @@ export function ThemedView({
   //const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, "background");
 
   return (
-    <View
-      style={[{ backgroundColor: colors.background }, style]}
+    <KeyboardAvoidingView
+      behavior="padding"
+      style={[
+        {
+          backgroundColor: colors.background,
+          justifyContent: "flex-end",
+          flex: 1,
+        },
+        style,
+      ]}
       {...otherProps}
     />
   );

@@ -33,6 +33,48 @@ const mockWorkout = {
         },
       ],
     },
+    {
+      name: "Pullups",
+      sets: [
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+      ],
+    },
+    {
+      name: "Pullups",
+      sets: [
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+      ],
+    },
   ],
 };
 
