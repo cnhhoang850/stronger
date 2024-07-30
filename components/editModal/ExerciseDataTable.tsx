@@ -1,10 +1,16 @@
-import React, { useState, useRef, useCallback, memo } from "react";
+import React, { useState, useRef, useCallback, memo, useEffect } from "react";
 import { StyleSheet, View, TextInput, Button } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
+import useStateSync from "@/hooks/useStateSync";
 
-const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) => {
-  const [sets, setSets] = useState(exercise.sets);
+const ExerciseDataTable = ({
+  exercise,
+  scrollViewRef,
+  scrollY,
+  onFormChange,
+}) => {
+  const [sets, setSets] = useStateSync(exercise.sets);
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const theme = useTheme();
   const lastSetRef = useRef(null);
@@ -26,7 +32,8 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
         ...exercise,
         sets: sets,
       };
-      onFormChange();
+      console.log(updatedExercise, "NEW IN TABLE");
+      onFormChange(updatedExercise);
     },
     [onFormChange],
   );
@@ -40,10 +47,15 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
   };
 
   const addSet = () => {
-    const newSet = { weight: 0, reps: 0, volume: 0, calories: 0 };
-    setSets((prevSets) => [...prevSets, newSet]);
+    const newSet = { weight: 0, reps: 0 };
+    const newSets = [...sets, newSet];
+    setSets(newSets);
     scrollViewRef.current.scrollToPosition(0, scrollY + 30);
-    onFormChange();
+    const updatedExercise = {
+      ...exercise,
+      sets: newSets,
+    };
+    onFormChange(updatedExercise);
   };
 
   return (
@@ -55,7 +67,11 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
           </ThemedText>
 
           {sets.map((set, index) => (
-            <View style={styles.inputRow} key={index} ref={index === sets.length - 1 ? lastSetRef : null}>
+            <View
+              style={styles.inputRow}
+              key={index}
+              ref={index === sets.length - 1 ? lastSetRef : null}
+            >
               <TextInput
                 style={[
                   styles.input,
@@ -63,7 +79,10 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
                   {
                     backgroundColor: theme.colors.background,
                     color: theme.colors.onSurface,
-                    borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
+                    borderColor:
+                      focusedInputIndex === index
+                        ? theme.colors.primary
+                        : "transparent",
                   },
                 ]}
                 value={set.weight.toString()}
@@ -86,7 +105,11 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
           </ThemedText>
 
           {sets.map((set, index) => (
-            <View style={styles.inputRow} key={index} ref={index === sets.length - 1 ? lastSetRef : null}>
+            <View
+              style={styles.inputRow}
+              key={index}
+              ref={index === sets.length - 1 ? lastSetRef : null}
+            >
               <TextInput
                 style={[
                   styles.input,
@@ -94,7 +117,10 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
                   {
                     backgroundColor: theme.colors.background,
                     color: theme.colors.onSurface,
-                    borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
+                    borderColor:
+                      focusedInputIndex === index
+                        ? theme.colors.primary
+                        : "transparent",
                   },
                 ]}
                 value={set.reps.toString()}
