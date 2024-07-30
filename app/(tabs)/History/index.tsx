@@ -30,6 +30,10 @@ export default function HomeScreen() {
         contentInsetAdjustmentBehavior="automatic"
         stickySectionHeadersEnabled={true}
         initialNumToRender={6}
+        maxToRenderPerBatch={10}
+        windowSize={11}
+        updateCellsBatchingPeriod={100}
+        removeClippedSubviews={true}
       />
     </ThemedView>
   );

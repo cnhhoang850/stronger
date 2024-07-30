@@ -1,33 +1,46 @@
-import React, { useState, useRef, useCallback, memo, useEffect } from "react";
-import { StyleSheet, View, TextInput, Button, TouchableOpacity } from "react-native";
+import React, { useState, useRef, memo, useEffect } from "react";
+import { StyleSheet, View, TextInput, TouchableOpacity, Modal, Animated } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) => {
   const [sets, setSets] = useState(exercise.sets);
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [selectedSetIndex, setSelectedSetIndex] = useState(null);
+  const menuScale = useRef(new Animated.Value(0)).current;
   const theme = useTheme();
 
+  useEffect(() => {
+    if (menuVisible) {
+      Animated.spring(menuScale, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(menuScale, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [menuVisible, menuScale]);
+
   const handleInputChange = (index, field, value) => {
-    // this call an outside parent prop change so re render
     setSets((prevSets) => {
       const newSets = [...prevSets];
       const cleanedValue = value.replace(/[^0-9.]/g, ""); // Remove all non-numeric characters
       const parsedValue = parseFloat(cleanedValue);
-      if (!isNaN(parsedValue)) {
-        newSets[index][field] = parsedValue; // Allow empty strings for clearing the field
-      } else {
-        newSets[index][field] = "";
-      }
+      newSets[index][field] = !isNaN(parsedValue) ? parsedValue : "";
       return newSets;
     });
-    const updatedExercise = {
-      ...exercise,
-      sets: sets,
-    };
-    console.log(updatedExercise, "NEW IN TABLE");
+
+    const updatedExercise = { ...exercise, sets };
     onFormChange(updatedExercise);
   };
+
   const handleFocus = (index) => {
     setFocusedInputIndex(index);
   };
@@ -37,17 +50,26 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
   };
 
   const addSet = () => {
-    // this call an outside parent prop change so re render
     const newSet = { weight: 0, reps: 0 };
     const newSets = [...sets, newSet];
     setSets(newSets);
     scrollViewRef.current.scrollToPosition(0, scrollY + 30);
-    const updatedExercise = {
-      ...exercise,
-      sets: newSets,
-    };
+    const updatedExercise = { ...exercise, sets: newSets };
     onFormChange(updatedExercise);
-    console.log("PRESSED");
+  };
+
+  const openMenu = (index, event) => {
+    setMenuPosition({ x: event.nativeEvent.pageX, y: event.nativeEvent.pageY });
+    setSelectedSetIndex(index);
+    setMenuVisible(true);
+  };
+
+  const deleteSet = () => {
+    const newSets = sets.filter((_, i) => i !== selectedSetIndex);
+    setSets(newSets);
+    const updatedExercise = { ...exercise, sets: newSets };
+    onFormChange(updatedExercise);
+    setMenuVisible(false);
   };
 
   return (
@@ -55,9 +77,8 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
       <View style={styles.columnContainer}>
         <View style={styles.entryColumn}>
           <ThemedText style={styles.headerText} type="menu">
-            {"Weight"}
+            Weight
           </ThemedText>
-
           {sets.map((set, index) => (
             <View style={styles.inputRow} key={index}>
               <TextInput
@@ -86,9 +107,8 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
 
         <View style={styles.entryColumn}>
           <ThemedText style={styles.headerText} type="menu">
-            {"Reps"}
+            Reps
           </ThemedText>
-
           {sets.map((set, index) => (
             <View style={styles.inputRow} key={index}>
               <TextInput
@@ -105,7 +125,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
                 onChangeText={(text) => handleInputChange(index, "reps", text)}
                 keyboardType="numeric"
                 selectTextOnFocus={true}
-                maxLength={3} // Limit input to 3 digits
+                maxLength={3}
                 textAlign="center"
                 onFocus={() => handleFocus(index)}
                 onBlur={handleBlur}
@@ -116,9 +136,8 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
 
         <View style={styles.entryColumn}>
           <ThemedText style={styles.headerText} type="menu">
-            {"Volume"}
+            Volume
           </ThemedText>
-
           {sets.map((set, index) => (
             <View style={styles.inputRow} key={index}>
               <TextInput
@@ -142,9 +161,8 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
 
         <View style={styles.entryColumn}>
           <ThemedText style={styles.headerText} type="menu">
-            {"Calories"}
+            Calories
           </ThemedText>
-
           {sets.map((set, index) => (
             <View style={styles.inputRow} key={index}>
               <TextInput
@@ -163,10 +181,22 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
             </View>
           ))}
         </View>
+
+        <View style={styles.entryColumn}>
+          <ThemedText style={styles.headerText} type="menu" />
+          {sets.map((_, index) => (
+            <View style={[styles.inputRow, { padding: 0, margin: 0 }]} key={index}>
+              <TouchableOpacity style={{ height: 28 }} onPressIn={(event) => openMenu(index, event)}>
+                <MaterialIcons name="info-outline" size={24} color={theme.colors.onSurface} />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
       </View>
+
       <View style={{ marginTop: 12, height: 50 }}>
         <TouchableOpacity
-          onPressIn={addSet}
+          onPress={addSet}
           style={{
             justifyContent: "center",
             height: 50,
@@ -175,9 +205,43 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
           }}
           hitSlop={{ top: 24, bottom: 10, left: 10, right: 10 }}
         >
-          <ThemedText style={{ color: "#007AFF", fontSize: 20 }}> + Add Set </ThemedText>
+          <ThemedText style={{ color: "#007AFF", fontSize: 20 }}>+ Add Set</ThemedText>
         </TouchableOpacity>
       </View>
+
+      {menuVisible && (
+        <Modal
+          transparent={true}
+          animationType="none"
+          visible={menuVisible}
+          onRequestClose={() => setMenuVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalBackground}
+            activeOpacity={1}
+            onPressOut={() => setMenuVisible(false)}
+          >
+            <Animated.View
+              style={[
+                styles.menuContainer,
+                {
+                  top: menuPosition.y + 50,
+                  left: menuPosition.x - 100, // Adjust left position for top-right anchor
+                  transform: [{ scale: menuScale }],
+                  opacity: menuScale.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 1],
+                  }),
+                },
+              ]}
+            >
+              <TouchableOpacity onPress={deleteSet} style={styles.menuItem}>
+                <ThemedText>Delete</ThemedText>
+              </TouchableOpacity>
+            </Animated.View>
+          </TouchableOpacity>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -190,7 +254,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 8,
     paddingLeft: 0,
-    paddingRight: 12,
     margin: 0,
   },
   entryColumn: {
@@ -204,7 +267,7 @@ const styles = StyleSheet.create({
     height: 28,
   },
   input: {
-    width: 38, // Fixed width for text input
+    width: 38,
     height: 24,
     backgroundColor: "#f0f0f0",
     borderRadius: 4,
@@ -223,5 +286,20 @@ const styles = StyleSheet.create({
   },
   headerText: {
     marginBottom: 4,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  menuContainer: {
+    position: "absolute",
+    width: 100,
+    backgroundColor: "white",
+    borderRadius: 8,
+    elevation: 5,
+    padding: 8,
+  },
+  menuItem: {
+    padding: 10,
   },
 });

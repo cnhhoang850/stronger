@@ -4,20 +4,17 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import {
-  Card as PaperCard,
-  Button as PaperButton,
-  useTheme,
-} from "react-native-paper";
+import { Card as PaperCard, Button as PaperButton, useTheme } from "react-native-paper";
 import { useNavigation, useLocalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
-import ExerciseDataTable from "@/components/editModal/ExerciseDataTable";
-import useStateSync from "@/hooks/useStateSync";
+import ExerciseDataTable from "@/components/editModal/ExerciseDataTableExperiment";
 
 export default function EditModal() {
   const { id: workoutId } = useLocalSearchParams();
@@ -39,41 +36,49 @@ export default function EditModal() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <PaperButton
-          mode="contained"
-          onPress={() => handleSave()}
+        <Pressable
+          onPressIn={() => handleSave()}
           style={{
-            backgroundColor: formChanged
-              ? theme.colors.success
-              : theme.colors.inverseOnSurface,
-            height: 36,
-            marginTop: 4,
+            justifyContent: "center",
+            height: 50,
+            alignItems: "center",
           }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <ThemedText
-            type="default"
+          <PaperButton
+            mode="contained"
             style={{
-              color: theme.colors.onPrimary,
-              fontSize: 16,
-              lineHeight: 16,
+              backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
+              height: 38,
+              marginBottom: 4,
             }}
           >
-            Save
-          </ThemedText>
-        </PaperButton>
+            <ThemedText
+              type="default"
+              style={{
+                color: theme.colors.onPrimary,
+                fontSize: 16,
+                lineHeight: 17,
+              }}
+            >
+              Save
+            </ThemedText>
+          </PaperButton>
+        </Pressable>
       ),
     });
   }, [navigation, formChanged]);
 
   const handleSave = () => {
+    // this changes inside the same function so no re render => async
     const newWorkout = { ...workoutFormSubmitData.current };
     console.log(newWorkout.exercises[0].sets.length, "TO SAVE");
-
     updateWorkout(workoutId, newWorkout);
-    // local state of form first before save
+    setFormChanged(false);
   };
 
   const handleFormChange = (newExercise) => {
+    // this re renders so handle change in exercise table use state is sync?
     setFormChanged(true);
     const newExercises = workoutFormData.exercises.map((exercise) => {
       if (exercise.id === newExercise.id && exercise.name === newExercise.name) {
@@ -106,9 +111,7 @@ export default function EditModal() {
         keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
         keyboardShouldPersistTaps="handled"
         onScrollEndDrag={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
-        onMomentumScrollEnd={(event) =>
-          setScrollY(event.nativeEvent.contentOffset.y)
-        }
+        onMomentumScrollEnd={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
         extraScrollHeight={50}
       >
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -119,10 +122,7 @@ export default function EditModal() {
               workoutFormData.exercises.map((exercise, index) => (
                 <View key={index}>
                   <View style={{ paddingLeft: 12, paddingBottom: 4 }}>
-                    <ThemedText
-                      style={{ opacity: 0.7, fontSize: 14 }}
-                      type="default"
-                    >
+                    <ThemedText style={{ opacity: 0.7, fontSize: 14 }} type="default">
                       {exercise.name.toUpperCase()}
                     </ThemedText>
                   </View>
