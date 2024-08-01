@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
 import { Colors } from "@/constants/Colors";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useTheme } from "react-native-paper";

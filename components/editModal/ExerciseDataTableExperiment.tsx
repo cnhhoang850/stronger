@@ -70,6 +70,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
     const updatedExercise = { ...exercise, sets: newSets };
     onFormChange(updatedExercise);
     setMenuVisible(false);
+    console.log(sets);
   };
 
   return (
@@ -185,9 +186,9 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
         <View style={styles.entryColumn}>
           <ThemedText style={styles.headerText} type="menu" />
           {sets.map((_, index) => (
-            <View style={[styles.inputRow, { padding: 0, margin: 0 }]} key={index}>
+            <View style={[styles.inputRow, { padding: 0, marginLeft: -20 }]} key={index}>
               <TouchableOpacity style={{ height: 28 }} onPressIn={(event) => openMenu(index, event)}>
-                <MaterialIcons name="info-outline" size={24} color={theme.colors.onSurface} />
+                <MaterialIcons name="more-vert" size={24} color={theme.colors.onSurface} />
               </TouchableOpacity>
             </View>
           ))}
@@ -232,6 +233,7 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, scrollY, onFormChange }) =
                     inputRange: [0, 1],
                     outputRange: [0, 1],
                   }),
+                  backgroundColor: theme.colors.surface,
                 },
               ]}
             >
@@ -263,7 +265,8 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
+    marginTop: 6,
+    marginBottom: 6,
     height: 28,
   },
   input: {
