@@ -112,9 +112,9 @@ export default function EditModal() {
   const handleFormChange = (newExercise) => {
     setFormChanged(true);
 
-    const newExercises = workoutFormData.current.exercises
-      .map((exercise) => (exercise.id === newExercise.id ? newExercise : exercise))
-      .filter((exercise) => exercise.sets.length > 0);
+    const newExercises = workoutFormData.current.exercises.map((exercise) =>
+      exercise.id === newExercise.id ? newExercise : exercise,
+    );
 
     workoutFormData.current = {
       ...workoutFormData.current,
@@ -154,6 +154,22 @@ export default function EditModal() {
     setWorkoutFormState(newWorkout);
     setFormChanged(true);
     //setMenuVisible(false);
+  };
+
+  const handleAddExercise = () => {
+    const newExercise = {
+      id: new Date().getTime().toString(),
+      name: "New Exercise",
+      sets: [],
+    };
+
+    const newExercises = [...workoutFormData.current.exercises, newExercise];
+    workoutFormData.current = {
+      ...workoutFormData.current,
+      exercises: newExercises,
+    };
+    setWorkoutFormState({ ...workoutFormState, exercises: newExercises });
+    setFormChanged(true);
   };
 
   const renderItem = ({ item, drag, isActive, getIndex }) => {
@@ -234,5 +250,17 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     padding: 10,
+  },
+  addButton: {
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  addButtonText: {
+    fontSize: 16,
+    color: "#000",
   },
 });
