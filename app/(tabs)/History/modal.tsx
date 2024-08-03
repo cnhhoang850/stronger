@@ -1,4 +1,4 @@
-import React, { useRef, useState, useLayoutEffect, useCallback } from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -9,6 +9,8 @@ import {
   Modal,
   Animated,
   ActionSheetIOS,
+  TextInput,
+  Dimensions,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Card as PaperCard, Button as PaperButton, useTheme } from "react-native-paper";
@@ -18,13 +20,14 @@ import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
 import ExerciseDataTable from "@/components/editModal/ExerciseDataTableExperiment";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useActionSheet } from "@expo/react-native-action-sheet";
+import { ScaleDecorator } from "react-native-draggable-flatlist";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 export default function EditModal() {
   const { id: workoutId } = useLocalSearchParams();
   const { workouts } = useStore();
-  const workoutData = workouts.find((workout) => workout.id === workoutId);
+  let workoutData = workouts.find((workout) => workout.id === workoutId);
   const updateWorkout = useStore((state) => state.updateWorkout);
 
   const [workoutFormState, setWorkoutFormState] = useState(workoutData);
@@ -33,13 +36,11 @@ export default function EditModal() {
 
   const selectedExerciseId = useRef(null);
 
-  const scrollViewRef = useRef(null);
+  let scrollViewRef = useRef(null);
   const [scrollY, setScrollY] = useState(0);
 
   const navigation = useNavigation();
   const theme = useTheme();
-
-  const { showActionSheetWithOptions } = useActionSheet();
 
   // Update navigation header
   useLayoutEffect(() => {
@@ -78,6 +79,30 @@ export default function EditModal() {
     });
   }, [navigation, formChanged]);
 
+  const offsetRef = useRef({ value: 0 });
+
+  useEffect(() => {
+    const listener = Keyboard.addListener("keyboardDidShow", (e) => {
+      const keyboardHeight = e.endCoordinates.height;
+      TextInput.State.currentlyFocusedInput().measure((originX, originY, width, height, pageX, pageY) => {
+        const yFromTop = pageY;
+        const componentHeight = height;
+        const screenHeight = Dimensions.get("window").height;
+        const yFromBottom = screenHeight - yFromTop - componentHeight;
+        const hiddenOffset = keyboardHeight - yFromBottom;
+        const margin = 32;
+        if (hiddenOffset > 0) {
+          console.log(offsetRef.current.value, hiddenOffset);
+          scrollViewRef.current.scrollToOffset({
+            animated: true,
+            offset: offsetRef.current.value + hiddenOffset + margin,
+          });
+        }
+      });
+    });
+    return () => listener.remove();
+  }, []);
+
   const handleSave = () => {
     const newWorkout = { ...workoutFormData.current };
     updateWorkout(workoutId, newWorkout);
@@ -115,8 +140,6 @@ export default function EditModal() {
         }
       },
     );
-    //setMenuPosition({ x: event.nativeEvent.pageX, y: event.nativeEvent.pageY });
-    //setMenuVisible(true);
   };
 
   const deleteExercise = () => {
@@ -133,60 +156,62 @@ export default function EditModal() {
     //setMenuVisible(false);
   };
 
+  const renderItem = ({ item, drag, isActive, getIndex }) => {
+    if (item.name === "metadata") {
+      return <SettingCard workout={workoutFormState} />;
+    }
+    return (
+      <ScaleDecorator>
+        <TouchableOpacity onLongPress={drag} disabled={isActive}>
+          <ExerciseDataTable
+            key={item.id}
+            index={getIndex()}
+            scrollY={scrollY}
+            scrollViewRef={scrollViewRef}
+            offsetRef={offsetRef}
+            exercise={item}
+            onFormChange={handleFormChange}
+            openExerciseMenu={openMenu}
+            end={workoutData.exercises.length}
+            inDrag={isActive}
+          />
+        </TouchableOpacity>
+      </ScaleDecorator>
+    );
+  };
+
   return (
-    <ThemedView>
-      <KeyboardAwareScrollView
-        ref={scrollViewRef}
-        enableResetScrollToCoords={false}
-        keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
-        keyboardShouldPersistTaps="handled"
-        onScrollEndDrag={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
-        onMomentumScrollEnd={(event) => setScrollY(event.nativeEvent.contentOffset.y)}
-        extraScrollHeight={50}
-      >
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <ThemedView style={styles.modalContent}>
-            <SettingCard workout={workoutData} onFormChange={handleFormChange} />
+    <ThemedView style={styles.modalContent}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <DraggableFlatList
+          contentContainerStyle={{ paddingBottom: 200 }}
+          ref={scrollViewRef}
+          onref={(ref) => (scrollViewRef = ref)}
+          contentInsetAdjustmentBehavior="automatic"
+          //  ListHeaderComponent={<SettingCard workout={workoutData} />}
+          data={[{ name: "metadata" }, ...workoutFormState.exercises]} // mockup to add metadata card
+          onDragEnd={({ data }) => {
+            let filterData = data.filter((item) => item.name !== "metadata");
+            const newWorkout = { ...workoutFormData.current, exercises: filterData };
+            workoutFormData.current = newWorkout;
+            setWorkoutFormState(newWorkout);
+            setFormChanged(true);
+          }}
+          keyExtractor={(item, index) => item + index}
+          renderItem={renderItem}
+          onScrollOffsetChange={(e) => {
+            offsetRef.current.value = e;
+          }}
+        />
+      </TouchableWithoutFeedback>
 
-            {workoutFormState.exercises.length > 0 &&
-              workoutFormState.exercises.map((exercise, index) => (
-                <View key={index}>
-                  <View style={{ paddingLeft: 12, paddingBottom: 4 }}>
-                    <ThemedText style={{ opacity: 0.7, fontSize: 14 }} type="default">
-                      {exercise.name.toUpperCase()}
-                    </ThemedText>
-                    <TouchableOpacity
-                      style={{ position: "absolute", right: 0, paddingRight: 12 }}
-                      onPressIn={(event) => openMenu(exercise.id, event)}
-                    >
-                      <ThemedText style={{ fontWeight: 800, fontSize: 40, opacity: 0.3 }}>. . .</ThemedText>
-                    </TouchableOpacity>
-                  </View>
-
-                  <Animated.View>
-                    <PaperCard mode="contained" style={styles.cardContainer}>
-                      <ExerciseDataTable
-                        scrollY={scrollY}
-                        scrollViewRef={scrollViewRef}
-                        exercise={exercise}
-                        onFormChange={handleFormChange}
-                      />
-                    </PaperCard>
-                  </Animated.View>
-                </View>
-              ))}
-
-            <View style={{ flex: 1, paddingBottom: 200 }}></View>
-          </ThemedView>
-        </TouchableWithoutFeedback>
-      </KeyboardAwareScrollView>
+      <View style={{ flex: 1, paddingBottom: 200 }}></View>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   modalContent: {
-    padding: 16,
     height: "100%",
   },
   cardContainer: {

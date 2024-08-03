@@ -24,7 +24,6 @@ export default function HomeLayout() {
           headerTitle: "Exercises",
         }}
       />
-      <Stack.Screen name="modal" options={{ title: "Edit workout", presentation: "modal" }} />
     </Stack>
   );
 }

@@ -6,10 +6,11 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
 import { Colors } from "@/constants/Colors";
-import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useTheme } from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -126,23 +127,25 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: colors.background,
-            },
-            headerTitleStyle: {
-              fontWeight: "bold",
-            },
-            headerLargeTitleShadowVisible: false,
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </PaperProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+          <Stack
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: colors.background,
+              },
+              headerTitleStyle: {
+                fontWeight: "bold",
+              },
+              headerLargeTitleShadowVisible: false,
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </PaperProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

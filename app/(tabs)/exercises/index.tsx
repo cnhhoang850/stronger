@@ -1,93 +1,72 @@
-import { useCallback } from "react";
-import { Image, StyleSheet, SectionList, useColorScheme } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import WorkoutHistoryCard from "@/components/WorkoutCard";
-import storage from "@/store/LocalStore";
-import useStore from "@/store/useStore";
+import React, { useState } from "react";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-export default function HomeScreen() {
-  const workouts = useStore((state) => state.workouts);
-  const groupedWorkouts = groupWorkoutsByMonth(workouts);
+const NUM_ITEMS = 10;
+function getColor(i: number) {
+  const multiplier = 255 / (NUM_ITEMS - 1);
+  const colorVal = i * multiplier;
+  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
+}
 
-  const renderItem = useCallback(({ item }) => {
-    return <WorkoutHistoryCard workout={item} />;
-  }, []);
+type Item = {
+  key: string;
+  label: string;
+  height: number;
+  width: number;
+  backgroundColor: string;
+};
 
-  storage.clearAll();
+const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
+  const backgroundColor = getColor(index);
+  return {
+    key: `item-${index}`,
+    label: String(index) + "",
+    height: 100,
+    width: 60 + Math.random() * 40,
+    backgroundColor,
+  };
+});
+
+export default function App() {
+  const [data, setData] = useState(initialData);
+
+  const renderItem = ({ item, drag, isActive }) => {
+    return (
+      <ScaleDecorator>
+        <TouchableOpacity
+          onLongPress={drag}
+          disabled={isActive}
+          style={[styles.rowItem, { backgroundColor: isActive ? "red" : item.backgroundColor }]}
+        >
+          <Text style={styles.text}>{item.label}</Text>
+        </TouchableOpacity>
+      </ScaleDecorator>
+    );
+  };
 
   return (
-    <ThemedView style={styles.sectionListContainer}>
-      <SectionList
-        sections={groupedWorkouts}
-        keyExtractor={(item, index) => item + index}
-        renderItem={renderItem}
-        renderSectionHeader={({ section: { title } }) => (
-          <ThemedView style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}>
-            <ThemedText type="subtitle">{title}</ThemedText>
-          </ThemedView>
-        )}
-        contentInsetAdjustmentBehavior="automatic"
-        stickySectionHeadersEnabled={true}
-        initialNumToRender={6}
-        maxToRenderPerBatch={10}
-        windowSize={11}
-        updateCellsBatchingPeriod={100}
-        removeClippedSubviews={true}
-      />
-    </ThemedView>
+    <DraggableFlatList
+      data={data}
+      onDragEnd={({ data }) => setData(data)}
+      keyExtractor={(item) => item.key}
+      renderItem={renderItem}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  sectionListContainer: {
-    flex: 1,
-    margin: 0,
-    paddingTop: 96,
-    paddingBottom: 0,
-    overflow: "hidden",
-  },
-  cardContainer: {
-    flex: 1,
-  },
-  titleContainer: {
-    flexDirection: "row",
+  rowItem: {
+    height: 100,
+    width: 100,
     alignItems: "center",
-    gap: 8,
+    justifyContent: "center",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+  text: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
-
-function groupWorkoutsByMonth(workouts) {
-  const groupedWorkouts = {};
-
-  workouts.forEach((workout) => {
-    if (!workout) return;
-
-    const date = new Date(workout.time);
-    const month = date.toLocaleString("default", { month: "long" });
-    const year = date.getFullYear();
-    const monthYear = `${month} ${year}`;
-
-    if (!groupedWorkouts[monthYear]) {
-      groupedWorkouts[monthYear] = [];
-    }
-
-    groupedWorkouts[monthYear].push(workout);
-  });
-
-  return Object.keys(groupedWorkouts).map((key) => ({
-    title: key,
-    data: groupedWorkouts[key],
-  }));
-}
