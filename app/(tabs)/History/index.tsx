@@ -1,17 +1,22 @@
-import { useCallback } from "react";
-import { Image, StyleSheet, SectionList, useColorScheme } from "react-native";
+import { useCallback, lazy, Suspense } from "react";
+import { StyleSheet, SectionList } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import WorkoutHistoryCard from "@/components/WorkoutCard";
 import storage from "@/store/LocalStore";
 import useStore from "@/store/useStore";
+import WorkoutCardSuspense from "@/components/WorkoutCardSuspense";
+const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
 
 export default function HomeScreen() {
   const workouts = useStore((state) => state.workouts);
   const groupedWorkouts = groupWorkoutsByMonth(workouts);
 
   const renderItem = useCallback(({ item }) => {
-    return <WorkoutHistoryCard workout={item} />;
+    return (
+      <Suspense fallback={<WorkoutCardSuspense />}>
+        <WorkoutHistoryCard workout={item} />
+      </Suspense>
+    );
   }, []);
 
   storage.clearAll();
@@ -23,15 +28,17 @@ export default function HomeScreen() {
         keyExtractor={(item, index) => item + index}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
-          <ThemedView style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}>
+          <ThemedView
+            style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}
+          >
             <ThemedText type="subtitle">{title}</ThemedText>
           </ThemedView>
         )}
         contentInsetAdjustmentBehavior="automatic"
         stickySectionHeadersEnabled={true}
         initialNumToRender={6}
-        maxToRenderPerBatch={10}
-        windowSize={11}
+        maxToRenderPerBatch={5}
+        windowSize={10}
         updateCellsBatchingPeriod={100}
         removeClippedSubviews={true}
       />

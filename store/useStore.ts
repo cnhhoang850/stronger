@@ -1,20 +1,28 @@
 import storage from "@/store/LocalStore";
 import { create } from "zustand";
 
-const keys = storage.getAllKeys();
-let workouts = keys.map((key) => {
-  let time = new Date(parseInt(key));
-  let workout = storage.getString(key);
-  if (!workout) {
-    return null;
+const loadExercises = () => {
+  let keys = storage.getString("exerciseKeys");
+  keys = JSON.parse(keys);
+
+  if (!keys) {
+    return [];
   }
-  let workoutObj = JSON.parse(workout);
-  workoutObj.time = time;
-  return workoutObj;
-});
+  return keys.map((key) => {
+    const exercise = storage.getString(key);
+    if (!exercise) {
+      return null;
+    }
+    return JSON.parse(exercise);
+  });
+};
 
 const loadWorkouts = () => {
-  const keys = storage.getAllKeys();
+  let keys = storage.getString("workoutKeys");
+  if (!keys) {
+    return [];
+  }
+  keys = JSON.parse(keys);
   return keys
     .map((key) => {
       const time = new Date(parseInt(key));

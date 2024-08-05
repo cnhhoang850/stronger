@@ -1,4 +1,11 @@
-import React, { useRef, useState, useLayoutEffect, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useLayoutEffect,
+  useEffect,
+  Suspense,
+  lazy,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -6,23 +13,27 @@ import {
   Keyboard,
   TouchableOpacity,
   Pressable,
-  Modal,
-  Animated,
   ActionSheetIOS,
   TextInput,
   Dimensions,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Card as PaperCard, Button as PaperButton, useTheme } from "react-native-paper";
+import { Button as PaperButton, useTheme } from "react-native-paper";
 import { useNavigation, useLocalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
-import ExerciseDataTable from "@/components/editModal/ExerciseDataTableExperiment";
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import { ScaleDecorator } from "react-native-draggable-flatlist";
+import {
+  ScaleDecorator,
+  OpacityDecorator,
+} from "react-native-draggable-flatlist";
 import DraggableFlatList from "react-native-draggable-flatlist";
+
+const ExerciseDataTable = lazy(
+  () => import("@/components/editModal/ExerciseDataTable"),
+);
+
+import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 
 export default function EditModal() {
   const { id: workoutId } = useLocalSearchParams();
@@ -37,7 +48,6 @@ export default function EditModal() {
   const selectedExerciseId = useRef(null);
 
   let scrollViewRef = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
 
   const navigation = useNavigation();
   const theme = useTheme();
@@ -58,7 +68,9 @@ export default function EditModal() {
           <PaperButton
             mode="contained"
             style={{
-              backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
+              backgroundColor: formChanged
+                ? theme.colors.success
+                : theme.colors.inverseOnSurface,
               height: 38,
               marginBottom: 4,
             }}
@@ -84,21 +96,22 @@ export default function EditModal() {
   useEffect(() => {
     const listener = Keyboard.addListener("keyboardDidShow", (e) => {
       const keyboardHeight = e.endCoordinates.height;
-      TextInput.State.currentlyFocusedInput().measure((originX, originY, width, height, pageX, pageY) => {
-        const yFromTop = pageY;
-        const componentHeight = height;
-        const screenHeight = Dimensions.get("window").height;
-        const yFromBottom = screenHeight - yFromTop - componentHeight;
-        const hiddenOffset = keyboardHeight - yFromBottom;
-        const margin = 32;
-        if (hiddenOffset > 0) {
-          console.log(offsetRef.current.value, hiddenOffset);
-          scrollViewRef.current.scrollToOffset({
-            animated: true,
-            offset: offsetRef.current.value + hiddenOffset + margin,
-          });
-        }
-      });
+      TextInput.State.currentlyFocusedInput().measure(
+        (originX, originY, width, height, pageX, pageY) => {
+          const yFromTop = pageY;
+          const componentHeight = height;
+          const screenHeight = Dimensions.get("window").height;
+          const yFromBottom = screenHeight - yFromTop - componentHeight;
+          const hiddenOffset = keyboardHeight - yFromBottom;
+          const margin = 32;
+          if (hiddenOffset > 0) {
+            scrollViewRef.current.scrollToOffset({
+              animated: true,
+              offset: offsetRef.current.value + hiddenOffset + margin,
+            });
+          }
+        },
+      );
     });
     return () => listener.remove();
   }, []);
@@ -123,9 +136,11 @@ export default function EditModal() {
     setWorkoutFormState({ ...workoutFormData.current });
   };
 
-  const openMenu = (exerciseId, event) => {
+  const openMenu = (exerciseId, event, fadeOut) => {
     selectedExerciseId.current = exerciseId;
-    const selectedExercise = workoutFormState.exercises.find((exercise) => exercise.id === exerciseId);
+    const selectedExercise = workoutFormState.exercises.find(
+      (exercise) => exercise.id === exerciseId,
+    );
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: ["Delete", "Rename", "Remove all sets", "Cancel"],
@@ -135,7 +150,7 @@ export default function EditModal() {
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
-          deleteExercise();
+          fadeOut(deleteExercise);
         } else if (buttonIndex === 1) {
         }
       },
@@ -168,31 +183,35 @@ export default function EditModal() {
       ...workoutFormData.current,
       exercises: newExercises,
     };
+
     setWorkoutFormState({ ...workoutFormState, exercises: newExercises });
     setFormChanged(true);
   };
 
-  const renderItem = ({ item, drag, isActive, getIndex }) => {
-    if (item.name === "metadata") {
-      return <SettingCard workout={workoutFormState} />;
-    }
+  useEffect(() => {
+    return () => {
+      // Clean up code here, if necessary
+    };
+  }, []);
+
+  const renderItem = ({ item, drag, isActive }) => {
     return (
-      <ScaleDecorator>
-        <TouchableOpacity onLongPress={drag} disabled={isActive}>
-          <ExerciseDataTable
-            key={item.id}
-            index={getIndex()}
-            scrollY={scrollY}
-            scrollViewRef={scrollViewRef}
-            offsetRef={offsetRef}
-            exercise={item}
-            onFormChange={handleFormChange}
-            openExerciseMenu={openMenu}
-            end={workoutData.exercises.length}
-            inDrag={isActive}
-          />
-        </TouchableOpacity>
-      </ScaleDecorator>
+      <Suspense fallback={<ExercideDataTableSuspense />}>
+        <OpacityDecorator>
+          <ScaleDecorator>
+            <TouchableOpacity onLongPress={drag} disabled={isActive}>
+              <ExerciseDataTable
+                key={item.id}
+                scrollViewRef={scrollViewRef}
+                offsetRef={offsetRef}
+                exercise={item}
+                onFormChange={handleFormChange}
+                openExerciseMenu={openMenu}
+              />
+            </TouchableOpacity>
+          </ScaleDecorator>
+        </OpacityDecorator>
+      </Suspense>
     );
   };
 
@@ -200,20 +219,40 @@ export default function EditModal() {
     <ThemedView style={styles.modalContent}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <DraggableFlatList
+          ListFooterComponent={() => (
+            <TouchableOpacity
+              onPress={handleAddExercise}
+              style={{
+                backgroundColor: theme.colors.surface,
+                padding: 16,
+                margin: 16,
+                borderRadius: 8,
+                alignItems: "center",
+              }}
+            >
+              <ThemedText>+Add Exercise</ThemedText>
+            </TouchableOpacity>
+          )}
+          ListHeaderComponent={() => <SettingCard workout={workoutFormState} />}
           contentContainerStyle={{ paddingBottom: 200 }}
           ref={scrollViewRef}
           onref={(ref) => (scrollViewRef = ref)}
           contentInsetAdjustmentBehavior="automatic"
           //  ListHeaderComponent={<SettingCard workout={workoutData} />}
-          data={[{ name: "metadata" }, ...workoutFormState.exercises]} // mockup to add metadata card
+          data={[...workoutFormState.exercises]} // mockup to add metadata card
           onDragEnd={({ data }) => {
-            let filterData = data.filter((item) => item.name !== "metadata");
-            const newWorkout = { ...workoutFormData.current, exercises: filterData };
+            let filterData = data.filter(
+              (item) => item.name !== "metadata" && item.name !== "footer",
+            );
+            const newWorkout = {
+              ...workoutFormData.current,
+              exercises: filterData,
+            };
             workoutFormData.current = newWorkout;
             setWorkoutFormState(newWorkout);
             setFormChanged(true);
           }}
-          keyExtractor={(item, index) => item + index}
+          keyExtractor={(item, index) => item.id} //for animated.view
           renderItem={renderItem}
           onScrollOffsetChange={(e) => {
             offsetRef.current.value = e;
