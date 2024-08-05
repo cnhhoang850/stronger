@@ -4,6 +4,7 @@ import React from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { SFTabBarIcon } from "@/components/navigation/SFTabBarIcon";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -19,22 +20,23 @@ export default function TabLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          title: "history",
+          title: "History",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "home" : "home-outline"} color={color} />
+            <SFTabBarIcon
+              name={focused ? "clock.fill" : "clock"}
+              tintColor={focused ? "#007AFF" : "8E8E93"}
+            />
           ),
           unmountOnBlur: true,
         }}
       />
+
       <Tabs.Screen
-        name="index"
+        name="exercises"
         options={{
-          title: "Explore",
+          title: "Exercises",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "code-slash" : "code-slash-outline"}
-              color={color}
-            />
+            <SFTabBarIcon name={"figure.run"} tintColor={focused ? "#007AFF" : "8E8E93"} />
           ),
           unmountOnBlur: true,
         }}

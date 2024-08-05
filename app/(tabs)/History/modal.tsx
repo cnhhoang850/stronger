@@ -1,11 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useLayoutEffect,
-  useEffect,
-  Suspense,
-  lazy,
-} from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy } from "react";
 import {
   StyleSheet,
   View,
@@ -23,15 +16,10 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
-import {
-  ScaleDecorator,
-  OpacityDecorator,
-} from "react-native-draggable-flatlist";
+import { ScaleDecorator, OpacityDecorator } from "react-native-draggable-flatlist";
 import DraggableFlatList from "react-native-draggable-flatlist";
 
-const ExerciseDataTable = lazy(
-  () => import("@/components/editModal/ExerciseDataTable"),
-);
+const ExerciseDataTable = lazy(() => import("@/components/editModal/ExerciseDataTable"));
 
 import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 
@@ -68,9 +56,7 @@ export default function EditModal() {
           <PaperButton
             mode="contained"
             style={{
-              backgroundColor: formChanged
-                ? theme.colors.success
-                : theme.colors.inverseOnSurface,
+              backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
               height: 38,
               marginBottom: 4,
             }}
@@ -96,22 +82,20 @@ export default function EditModal() {
   useEffect(() => {
     const listener = Keyboard.addListener("keyboardDidShow", (e) => {
       const keyboardHeight = e.endCoordinates.height;
-      TextInput.State.currentlyFocusedInput().measure(
-        (originX, originY, width, height, pageX, pageY) => {
-          const yFromTop = pageY;
-          const componentHeight = height;
-          const screenHeight = Dimensions.get("window").height;
-          const yFromBottom = screenHeight - yFromTop - componentHeight;
-          const hiddenOffset = keyboardHeight - yFromBottom;
-          const margin = 32;
-          if (hiddenOffset > 0) {
-            scrollViewRef.current.scrollToOffset({
-              animated: true,
-              offset: offsetRef.current.value + hiddenOffset + margin,
-            });
-          }
-        },
-      );
+      TextInput.State.currentlyFocusedInput().measure((originX, originY, width, height, pageX, pageY) => {
+        const yFromTop = pageY;
+        const componentHeight = height;
+        const screenHeight = Dimensions.get("window").height;
+        const yFromBottom = screenHeight - yFromTop - componentHeight;
+        const hiddenOffset = keyboardHeight - yFromBottom;
+        const margin = 32;
+        if (hiddenOffset > 0) {
+          scrollViewRef.current.scrollToOffset({
+            animated: true,
+            offset: offsetRef.current.value + hiddenOffset + margin,
+          });
+        }
+      });
     });
     return () => listener.remove();
   }, []);
@@ -138,9 +122,7 @@ export default function EditModal() {
 
   const openMenu = (exerciseId, event, fadeOut) => {
     selectedExerciseId.current = exerciseId;
-    const selectedExercise = workoutFormState.exercises.find(
-      (exercise) => exercise.id === exerciseId,
-    );
+    const selectedExercise = workoutFormState.exercises.find((exercise) => exercise.id === exerciseId);
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: ["Delete", "Rename", "Remove all sets", "Cancel"],
@@ -219,6 +201,8 @@ export default function EditModal() {
     <ThemedView style={styles.modalContent}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <DraggableFlatList
+          renderItem={renderItem}
+          keyExtractor={(item, index) => item.id} //for animated.view
           ListFooterComponent={() => (
             <TouchableOpacity
               onPress={handleAddExercise}
@@ -238,12 +222,9 @@ export default function EditModal() {
           ref={scrollViewRef}
           onref={(ref) => (scrollViewRef = ref)}
           contentInsetAdjustmentBehavior="automatic"
-          //  ListHeaderComponent={<SettingCard workout={workoutData} />}
           data={[...workoutFormState.exercises]} // mockup to add metadata card
           onDragEnd={({ data }) => {
-            let filterData = data.filter(
-              (item) => item.name !== "metadata" && item.name !== "footer",
-            );
+            let filterData = data.filter((item) => item.name !== "metadata" && item.name !== "footer");
             const newWorkout = {
               ...workoutFormData.current,
               exercises: filterData,
@@ -252,8 +233,6 @@ export default function EditModal() {
             setWorkoutFormState(newWorkout);
             setFormChanged(true);
           }}
-          keyExtractor={(item, index) => item.id} //for animated.view
-          renderItem={renderItem}
           onScrollOffsetChange={(e) => {
             offsetRef.current.value = e;
           }}

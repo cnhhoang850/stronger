@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import useStore from "@/store/useStore";
 
 const NUM_ITEMS = 10;
 function getColor(i: number) {
@@ -31,6 +32,8 @@ const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
 
 export default function App() {
   const [data, setData] = useState(initialData);
+  const exerciseData = useStore((state) => state.exercises);
+  console.log(exerciseData);
 
   const renderItem = ({ item, drag, isActive }) => {
     return (

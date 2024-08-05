@@ -7,12 +7,7 @@ import { StyleSheet, View, Text } from "react-native";
 export function SFTabBarIcon({ style, ...rest }: IconProps<ComponentProps<typeof SymbolView>["name"]>) {
   return (
     <Text style={styles.container}>
-      <SymbolView
-        size={25}
-        style={[styles.symbol, { marginBottom: -3 }, style]}
-        {...rest}
-        type="monochrome"
-      />
+      <SymbolView size={25} style={[styles.symbol, style]} {...rest} type="monochrome" />
     </Text>
   );
 }
@@ -20,9 +15,10 @@ export function SFTabBarIcon({ style, ...rest }: IconProps<ComponentProps<typeof
 const styles = StyleSheet.create({
   container: {
     marginRight: 2.5,
+    marginTop: 6,
   },
   symbol: {
-    width: 35,
-    height: 35,
+    width: 32,
+    height: 32,
   },
 });
