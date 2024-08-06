@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import { View } from "react-native";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
@@ -17,6 +18,15 @@ export default function TabLayout() {
         unmountOnBlur: true,
         tabBarStyle: {
           height: 89,
+          shadowColor: "black",
+          shadowOffset: {
+            width: 10,
+            height: 10,
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 6,
+          borderTopColor: "gray",
+          borderTopWidth: 0.2,
         },
         tabBarLabelStyle: {
           marginBottom: 4,
@@ -24,6 +34,8 @@ export default function TabLayout() {
         tabBarItemStyle: {
           marginTop: 8,
         },
+        headerShadowVisible: true,
+        headerTransparent: true,
       }}
     >
       <Tabs.Screen
@@ -31,10 +43,7 @@ export default function TabLayout() {
         options={{
           title: "History",
           tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon
-              name={focused ? "clock.fill" : "clock"}
-              color={focused ? "#007AFF" : "gray"}
-            />
+            <SFTabBarIcon name={focused ? "clock.fill" : "clock"} color={focused ? "#007AFF" : "gray"} />
           ),
           unmountOnBlur: true,
         }}
@@ -45,10 +54,7 @@ export default function TabLayout() {
         options={{
           title: "Exercises",
           tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon
-              name={"figure.run"}
-              color={focused ? "#007AFF" : "gray"}
-            />
+            <SFTabBarIcon name={"figure.run"} color={focused ? "#007AFF" : "gray"} />
           ),
           unmountOnBlur: true,
         }}

@@ -247,6 +247,7 @@ export default function EditModal() {
 const styles = StyleSheet.create({
   modalContent: {
     height: "100%",
+    paddingTop: 16,
   },
   cardContainer: {
     padding: 2,

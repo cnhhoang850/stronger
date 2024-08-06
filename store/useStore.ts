@@ -13,7 +13,8 @@ const loadExercises = () => {
     if (!exercise) {
       return null;
     }
-    return JSON.parse(exercise);
+    const exerciseObj = JSON.parse(exercise);
+    return exerciseObj;
   });
 };
 

@@ -28,9 +28,7 @@ export default function HomeScreen() {
         keyExtractor={(item, index) => item + index}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
-          <ThemedView
-            style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}
-          >
+          <ThemedView style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}>
             <ThemedText type="subtitle">{title}</ThemedText>
           </ThemedView>
         )}
