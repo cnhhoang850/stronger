@@ -1,75 +1,53 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React, { useLayoutEffect, useState } from "react";
 import useStore from "@/store/useStore";
-
-const NUM_ITEMS = 10;
-function getColor(i: number) {
-  const multiplier = 255 / (NUM_ITEMS - 1);
-  const colorVal = i * multiplier;
-  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-}
-
-type Item = {
-  key: string;
-  label: string;
-  height: number;
-  width: number;
-  backgroundColor: string;
-};
-
-const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
-  const backgroundColor = getColor(index);
-  return {
-    key: `item-${index}`,
-    label: String(index) + "",
-    height: 100,
-    width: 60 + Math.random() * 40,
-    backgroundColor,
-  };
-});
+import { StyleSheet, ScrollView } from "react-native";
+import { ThemedView } from "@/components/ThemedView";
+import { SymbolView, SymbolViewProps } from "expo-symbols";
+import { SFSymbol } from "@/components/SFSymbols";
+import { Searchbar, useTheme } from "react-native-paper";
+import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import { Share } from "react-native";
+import { useNavigation } from "expo-router";
+import WorkoutCardSuspense from "@/components/WorkoutCardSuspense";
 
 export default function App() {
-  const [data, setData] = useState(initialData);
+  const theme = useTheme();
   const exerciseData = useStore((state) => state.exercises);
-  console.log(exerciseData);
+  const [searchVal, setSearchVal] = useState("");
 
-  const renderItem = ({ item, drag, isActive }) => {
-    return (
-      <ScaleDecorator>
-        <TouchableOpacity
-          onLongPress={drag}
-          disabled={isActive}
-          style={[styles.rowItem, { backgroundColor: isActive ? "red" : item.backgroundColor }]}
-        >
-          <Text style={styles.text}>{item.label}</Text>
-        </TouchableOpacity>
-      </ScaleDecorator>
-    );
+  const navigation = useNavigation();
+
+  const updateSearch = (search: string) => {
+    setSearchVal(search);
   };
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerSearchBarOptions: {
+        hideWhenScrolling: false,
+      },
+    });
+  }, [navigation]);
   return (
-    <DraggableFlatList
-      data={data}
-      onDragEnd={({ data }) => setData(data)}
-      keyExtractor={(item) => item.key}
-      renderItem={renderItem}
-    />
+    <ScrollView
+      style={{ backgroundColor: theme.colors.background }}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <ThemedView style={styles.sectionListContainer}></ThemedView>
+      <WorkoutCardSuspense />
+
+      <WorkoutCardSuspense />
+
+      <WorkoutCardSuspense />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  rowItem: {
-    height: 100,
-    width: 100,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+  sectionListContainer: {},
+  searchbar: {
+    margin: 16,
+    backgroundColor: "transparent",
+    borderRadius: 8,
   },
 });

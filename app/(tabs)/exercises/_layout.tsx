@@ -14,6 +14,9 @@ export default function HomeLayout() {
           fontWeight: "bold",
         },
         headerLargeTitleShadowVisible: false,
+        headerSearchBarOptions: {
+          placeholder: "Search",
+        },
       }}
     >
       <Stack.Screen

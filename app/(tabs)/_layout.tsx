@@ -15,6 +15,15 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         unmountOnBlur: true,
+        tabBarStyle: {
+          height: 89,
+        },
+        tabBarLabelStyle: {
+          marginBottom: 4,
+        },
+        tabBarItemStyle: {
+          marginTop: 8,
+        },
       }}
     >
       <Tabs.Screen
@@ -24,7 +33,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <SFTabBarIcon
               name={focused ? "clock.fill" : "clock"}
-              tintColor={focused ? "#007AFF" : "8E8E93"}
+              color={focused ? "#007AFF" : "gray"}
             />
           ),
           unmountOnBlur: true,
@@ -36,7 +45,10 @@ export default function TabLayout() {
         options={{
           title: "Exercises",
           tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon name={"figure.run"} tintColor={focused ? "#007AFF" : "8E8E93"} />
+            <SFTabBarIcon
+              name={"figure.run"}
+              color={focused ? "#007AFF" : "gray"}
+            />
           ),
           unmountOnBlur: true,
         }}

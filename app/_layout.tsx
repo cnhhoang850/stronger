@@ -4,8 +4,10 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
-import { Colors } from "@/constants/Colors";
+import {
+  MD3LightTheme as DefaultPaperTheme,
+  PaperProvider,
+} from "react-native-paper";
 
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -129,7 +131,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+        <PaperProvider
+          theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}
+        >
           <Stack
             screenOptions={{
               headerStyle: {

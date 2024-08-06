@@ -50,8 +50,6 @@ const styles = StyleSheet.create({
   sectionListContainer: {
     flex: 1,
     margin: 0,
-    paddingTop: 96,
-    paddingBottom: 0,
     overflow: "hidden",
   },
   cardContainer: {
