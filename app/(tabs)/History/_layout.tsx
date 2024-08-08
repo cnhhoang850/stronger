@@ -1,19 +1,19 @@
 import { Stack } from "expo-router";
 import { useTheme } from "react-native-paper";
+import { Appearance } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
   return (
     <Stack
       screenOptions={{
-        animation: "slide_from_bottom",
-        headerStyle: {
-          backgroundColor: colors.background,
-        },
         headerTitleStyle: {
           fontWeight: "bold",
         },
         headerLargeTitleShadowVisible: false,
+        headerLargeStyle: {
+          backgroundColor: colors.background,
+        },
       }}
     >
       <Stack.Screen
@@ -22,12 +22,11 @@ export default function HomeLayout() {
           headerShown: true,
           headerLargeTitle: true,
           headerTitle: "History",
+          headerTransparent: true,
+          headerBlurEffect: "regular",
         }}
       />
-      <Stack.Screen
-        name="modal"
-        options={{ title: "Edit workout", presentation: "modal" }}
-      />
+      <Stack.Screen name="modal" options={{ title: "Edit workout", presentation: "modal" }} />
     </Stack>
   );
 }

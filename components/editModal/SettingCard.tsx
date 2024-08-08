@@ -29,6 +29,8 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     paddingLeft: 12,
     marginBottom: 26,
+    marginLeft: 16,
+    marginRight: 16,
   },
   cardRow: {
     display: "flex",

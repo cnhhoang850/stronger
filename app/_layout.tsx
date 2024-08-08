@@ -5,10 +5,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
-import { Colors } from "@/constants/Colors";
 
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useTheme } from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,7 +34,7 @@ const paperTheme = {
     onError: "rgb(255, 255, 255)",
     errorContainer: "rgb(255, 218, 214)",
     onErrorContainer: "rgb(65, 0, 2)",
-    background: "#F2F2F7",
+    background: "#F5F5F7",
     onBackground: "rgb(26, 28, 30)",
     surface: "rgb(253, 252, 255)",
     onSurface: "rgb(26, 28, 30)",
@@ -54,6 +55,7 @@ const paperTheme = {
       level4: "rgb(255, 255, 255)",
       level5: "rgb(255, 255, 255)",
     },
+    success: "#4cd964",
     surfaceDisabled: "rgba(26, 28, 30, 0.12)",
     onSurfaceDisabled: "rgba(26, 28, 30, 0.38)",
     backdrop: "rgba(45, 49, 56, 0.4)",
@@ -79,11 +81,11 @@ const darkPaperTheme = {
     onError: "rgb(105, 0, 5)",
     errorContainer: "rgb(147, 0, 10)",
     onErrorContainer: "rgb(255, 180, 171)",
-    background: "rgb(26, 28, 30)",
+    background: "rgb(0, 0, 0)",
     onBackground: "rgb(227, 226, 230)",
     surface: "rgb(26, 28, 30)",
     onSurface: "rgb(227, 226, 230)",
-    surfaceVariant: "rgb(67, 71, 78)",
+    surfaceVariant: "#161618",
     onSurfaceVariant: "rgb(195, 198, 207)",
     outline: "rgb(141, 145, 153)",
     outlineVariant: "rgb(67, 71, 78)",
@@ -100,6 +102,7 @@ const darkPaperTheme = {
       level4: "rgb(43, 49, 57)",
       level5: "rgb(46, 52, 62)",
     },
+    success: "#4cd964",
     surfaceDisabled: "rgba(227, 226, 230, 0.12)",
     onSurfaceDisabled: "rgba(227, 226, 230, 0.38)",
     backdrop: "rgba(45, 49, 56, 0.4)",
@@ -123,23 +126,25 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: colors.background,
-            },
-            headerTitleStyle: {
-              fontWeight: "bold",
-            },
-            headerLargeTitleShadowVisible: false,
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </PaperProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+          <Stack
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: colors.background,
+              },
+              headerTitleStyle: {
+                fontWeight: "bold",
+              },
+              headerLargeTitleShadowVisible: false,
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </PaperProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -1,9 +1,11 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import { View } from "react-native";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { SFTabBarIcon } from "@/components/navigation/SFTabBarIcon";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -13,24 +15,48 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
+        unmountOnBlur: true,
+        tabBarStyle: {
+          height: 89,
+          shadowColor: "black",
+          shadowOffset: {
+            width: 10,
+            height: 10,
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 6,
+          borderTopColor: "gray",
+          borderTopWidth: 0.2,
+        },
+        tabBarLabelStyle: {
+          marginBottom: 4,
+        },
+        tabBarItemStyle: {
+          marginTop: 8,
+        },
+        headerShadowVisible: true,
+        headerTransparent: true,
       }}
     >
       <Tabs.Screen
         name="history"
         options={{
-          title: "history",
+          title: "History",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "home" : "home-outline"} color={color} />
+            <SFTabBarIcon name={focused ? "clock.fill" : "clock"} color={focused ? "#007AFF" : "gray"} />
           ),
+          unmountOnBlur: true,
         }}
       />
+
       <Tabs.Screen
-        name="index"
+        name="exercises"
         options={{
-          title: "Explore",
+          title: "Exercises",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "code-slash" : "code-slash-outline"} color={color} />
+            <SFTabBarIcon name={"figure.run"} color={focused ? "#007AFF" : "gray"} />
           ),
+          unmountOnBlur: true,
         }}
       />
     </Tabs>

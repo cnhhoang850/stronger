@@ -30,15 +30,3 @@ export default function formatDuration(seconds: number): string {
   const remainingMonths = months % 12;
   return remainingMonths === 0 ? `${years}y` : `${years}y ${remainingMonths}mo`;
 }
-
-// Example usage:
-console.log(formatDuration(45)); // "45s"
-console.log(formatDuration(90)); // "1m"
-console.log(formatDuration(3600)); // "1h"
-console.log(formatDuration(3660)); // "1h 1m"
-console.log(formatDuration(86400)); // "1d"
-console.log(formatDuration(90000)); // "1d 1h"
-console.log(formatDuration(2592000)); // "1mo"
-console.log(formatDuration(2678400)); // "1mo 1d"
-console.log(formatDuration(31536000)); // "1y"
-console.log(formatDuration(31708800)); // "1y 1mo"

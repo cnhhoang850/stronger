@@ -26,13 +26,3 @@ export default function formatDate(date: Date): string {
 
   return `${day}, ${dateStr} ${month} ${year}`;
 }
-
-// Example usage:
-const now = new Date();
-const formattedDate = formatDate(now);
-console.log(formattedDate);
-
-// For testing with a specific date:
-const specificDate = new Date("2024-07-16T10:00:00");
-const formattedSpecificDate = formatDate(specificDate);
-console.log(formattedSpecificDate);

@@ -1,17 +1,22 @@
-import { useCallback } from "react";
-import { Image, StyleSheet, SectionList, useColorScheme } from "react-native";
+import { useCallback, lazy, Suspense } from "react";
+import { StyleSheet, SectionList } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import WorkoutHistoryCard from "@/components/WorkoutCard";
 import storage from "@/store/LocalStore";
 import useStore from "@/store/useStore";
+import WorkoutCardSuspense from "@/components/WorkoutCardSuspense";
+const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
 
 export default function HomeScreen() {
   const workouts = useStore((state) => state.workouts);
   const groupedWorkouts = groupWorkoutsByMonth(workouts);
 
   const renderItem = useCallback(({ item }) => {
-    return <WorkoutHistoryCard workout={item} />;
+    return (
+      <Suspense fallback={<WorkoutCardSuspense />}>
+        <WorkoutHistoryCard workout={item} />
+      </Suspense>
+    );
   }, []);
 
   storage.clearAll();
@@ -30,6 +35,10 @@ export default function HomeScreen() {
         contentInsetAdjustmentBehavior="automatic"
         stickySectionHeadersEnabled={true}
         initialNumToRender={6}
+        maxToRenderPerBatch={5}
+        windowSize={10}
+        updateCellsBatchingPeriod={100}
+        removeClippedSubviews={true}
       />
     </ThemedView>
   );
@@ -39,8 +48,6 @@ const styles = StyleSheet.create({
   sectionListContainer: {
     flex: 1,
     margin: 0,
-    paddingTop: 96,
-    paddingBottom: 0,
     overflow: "hidden",
   },
   cardContainer: {
