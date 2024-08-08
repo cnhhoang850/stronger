@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useState, useRef } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import useStore from "@/store/useStore";
-import { StyleSheet, Text, View, SectionList } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useNavigation } from "expo-router";
@@ -9,6 +9,7 @@ import ExerciseImages from "@/assets/exercises/images";
 import ExerciseListItem from "@/components/ExerciseListItem";
 import { FlashList } from "@shopify/flash-list";
 import { sort } from "fast-sort";
+import * as Haptics from "expo-haptics";
 
 export default function App() {
   const theme = useTheme();
@@ -40,8 +41,7 @@ export default function App() {
         style={{
           height: 0,
           width: "100%",
-          backgroundColor: theme.colors.outlineVariant,
-          marginVertical: 6,
+          marginVertical: 3,
         }}
       />
     );
@@ -50,14 +50,25 @@ export default function App() {
   const flashListRender = ({ item }) => {
     if (typeof item === "string") {
       return (
-        <ThemedText style={{ opacity: 0.7, fontSize: 18, paddingLeft: 12, marginBottom: -8 }} type="default">
+        <ThemedText
+          style={{ opacity: 0.7, fontSize: 24, paddingLeft: 12, marginBottom: -2, marginTop: 16 }}
+          type="default"
+        >
           {item}
         </ThemedText>
       );
     }
 
     const source = `img${item.id}` as keyof typeof ExerciseImages;
-    return <ExerciseListItem title={item.name} image={ExerciseImages[source]} description={item.target} />;
+    return <ExerciseListItem image={ExerciseImages[source]} exercise={item} />;
+  };
+
+  const handleViewableItemsChanged = ({ viewableItems }) => {
+    viewableItems.forEach((viewableItem) => {
+      if (viewableItem.isViewable && typeof viewableItem.item === "string") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+      }
+    });
   };
 
   return (
@@ -66,12 +77,16 @@ export default function App() {
         contentInsetAdjustmentBehavior="automatic"
         data={exercisesState}
         renderItem={flashListRender}
-        estimatedItemSize={62}
+        estimatedItemSize={76}
         ItemSeparatorComponent={FlatlistItemSeparator}
         getItemType={(item) => {
           return typeof item === "string" ? "sectionHeader" : "row";
         }}
         contentContainerStyle={styles.sectionListContainer}
+        onViewableItemsChanged={handleViewableItemsChanged}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50,
+        }}
       />
     </ThemedView>
   );
@@ -94,42 +109,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const preprocessDataFlashListSlow = (data, searchVal, filterBy, sortOrder) => {
-  // Filter data based on the search value
-  const filteredData = data.filter((item) => item.name.toLowerCase().includes(searchVal.toLowerCase()));
-
-  // Use an object to map sections by key
-  const sectionMap = {};
-
-  filteredData.forEach((item) => {
-    const sectionKey = filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
-    if (!sectionMap[sectionKey]) {
-      sectionMap[sectionKey] = [];
-    }
-    sectionMap[sectionKey].push(item);
-  });
-
-  // Get and sort section titles
-  const sortedSections = Object.keys(sectionMap).sort((a, b) =>
-    sortOrder === "asc" ? a.localeCompare(b) : b.localeCompare(a),
-  );
-
-  // Prepare the FlashList data
-  const flashListData = [];
-  sortedSections.forEach((key) => {
-    flashListData.push(key); // Section header
-    const sortedItems = sectionMap[key].sort((a, b) =>
-      sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name),
-    );
-    flashListData.push(...sortedItems); // Section items
-  });
-
-  return flashListData;
-};
-
 const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   // Filter data based on the search value
-  const filteredData = data.filter((item) => item.name.toLowerCase().includes(searchVal.toLowerCase()));
+  const searchWords = searchVal.toLowerCase().split(" ");
+  const filteredData = data.filter((item) =>
+    searchWords.every((word) => item.name.toLowerCase().includes(word)),
+  );
 
   // Use an object to map sections by key
   const sectionMap = {};
@@ -143,13 +128,19 @@ const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   });
 
   // Get and sort section titles
-  const sortedSections = sort(Object.keys(sectionMap)).asc();
+  const sortedSections = Object.keys(sectionMap).sort();
 
   // Prepare the FlashList data
   const flashListData = [];
   sortedSections.forEach((key) => {
     flashListData.push(key); // Section header
-    const sortedItems = sort(sectionMap[key])[sortOrder === "asc" ? "asc" : "desc"]((item) => item.name);
+    const sortedItems = sectionMap[key].sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
     flashListData.push(...sortedItems); // Section items
   });
 

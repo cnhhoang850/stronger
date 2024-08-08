@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactElement } from "react";
-import { View, StyleSheet, useColorScheme, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, useColorScheme, ScrollView, Dimensions } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -14,13 +14,10 @@ const HEADER_HEIGHT = 280;
 
 type Props = PropsWithChildren<{
   headerImage: ReactElement;
-  headerBackgroundColor: { dark: string; light: string };
 }>;
 
-const { width } = Dimensions.get("window");
-
-export default function ParallaxScrollView({ children, headerImage, headerBackgroundColor }: Props) {
-  const colorScheme = useColorScheme();
+export default function ParallaxScrollView({ children, headerImage }: Props) {
+  const colorScheme = useColorScheme() ?? "light";
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const theme = useTheme();
@@ -39,42 +36,29 @@ export default function ParallaxScrollView({ children, headerImage, headerBackgr
           scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
         },
       ],
-      //opacity: interpolate(scrollOffset.value, [0, HEADER_HEIGHT / 2, HEADER_HEIGHT], [0.9, 0.5, 0]),
+      opacity: interpolate(scrollOffset.value, [0, HEADER_HEIGHT / 2, HEADER_HEIGHT], [0.9, 0.5, 0]),
     };
   });
 
   const contentAnimatedStyle = useAnimatedStyle(() => {
     return {
-      marginHorizontal: interpolate(
-        scrollOffset.value,
-        [HEADER_HEIGHT / 3, HEADER_HEIGHT / 2, HEADER_HEIGHT],
-        [8, 4, 0],
-        "clamp",
-      ),
+      width: interpolate(scrollOffset.value, [0, HEADER_HEIGHT / 2, HEADER_HEIGHT], [0.9, 0.5, 0]),
     };
   });
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <Animated.ScrollView
         contentInsetAdjustmentBehavior="automatic"
         ref={scrollRef}
         scrollEventThrottle={16}
       >
-        <Animated.View style={[styles.header, { backgroundColor: "#fff" }, headerAnimatedStyle]}>
-          {headerImage}
-        </Animated.View>
-        <Animated.View
-          style={[
-            styles.content,
-            contentAnimatedStyle,
-            { backgroundColor: headerBackgroundColor[colorScheme] },
-          ]}
-        >
+        <Animated.View style={[styles.header, headerAnimatedStyle]}>{headerImage}</Animated.View>
+        <Animated.View style={[styles.content, { backgroundColor: theme.colors.background }]}>
           {children}
         </Animated.View>
       </Animated.ScrollView>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -86,7 +70,6 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
     height: 280,
     padding: 0,
   },
@@ -97,8 +80,6 @@ const styles = StyleSheet.create({
     gap: 16,
     overflow: "hidden",
     paddingTop: 32,
-    borderTopLeftRadius: 24,
-    borderTopEndRadius: 24,
-    backgroundColor: "#000",
+    borderRadius: 24,
   },
 });

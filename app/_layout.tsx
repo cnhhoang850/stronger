@@ -10,6 +10,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import ExerciseListItem from "@/components/MinimizedWorkout";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -18,7 +19,7 @@ const paperTheme = {
   ...DefaultPaperTheme,
 
   colors: {
-    primary: "rgb(0, 95, 175)",
+    primary: "rgb(165, 248, 71)",
     onPrimary: "rgb(255, 255, 255)",
     primaryContainer: "rgb(212, 227, 255)",
     onPrimaryContainer: "rgb(0, 28, 58)",
@@ -65,7 +66,7 @@ const paperTheme = {
 const darkPaperTheme = {
   ...DefaultPaperTheme,
   colors: {
-    primary: "rgb(190, 215, 255)",
+    primary: "rgb(165, 248, 71)",
     onPrimary: "rgb(0, 49, 95)",
     primaryContainer: "rgb(0, 71, 134)",
     onPrimaryContainer: "rgb(212, 227, 255)",
@@ -137,12 +138,15 @@ export default function RootLayout() {
               headerTitleStyle: {
                 fontWeight: "bold",
               },
-              headerLargeTitleShadowVisible: false,
+              headerLargeTitleShadowVisible: true,
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="newWorkout" options={{ headerShown: false, presentation: "modal" }} />
             <Stack.Screen name="+not-found" />
           </Stack>
+
+          <ExerciseListItem style={{ position: "absolute", bottom: 100, backgroundColor: "#000" }} />
         </PaperProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

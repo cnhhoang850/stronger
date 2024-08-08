@@ -12,14 +12,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Card as PaperCard } from "react-native-paper";
+import * as Haptics from "expo-haptics";
 
-const ExerciseDataTable = ({
-  exercise,
-  scrollViewRef,
-  onFormChange,
-  openExerciseMenu,
-  offsetRef,
-}) => {
+const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExerciseMenu, offsetRef }) => {
   const [sets, setSets] = useState(exercise.sets);
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -78,6 +73,7 @@ const ExerciseDataTable = ({
   };
 
   const addSet = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const newSet = { weight: 0, reps: 0 };
     const newSets = [...sets, newSet];
     setSets(newSets);
@@ -101,6 +97,7 @@ const ExerciseDataTable = ({
     setSets(newSets);
     const updatedExercise = { ...exercise, sets: newSets };
     onFormChange(updatedExercise);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
     setMenuVisible(false);
   };
 
@@ -131,9 +128,7 @@ const ExerciseDataTable = ({
             style={{ position: "absolute", right: 0, paddingRight: 12 }}
             onPressIn={(event) => openExerciseMenu(exercise.id, event, fadeOut)}
           >
-            <ThemedText style={{ fontWeight: 800, fontSize: 40, opacity: 0.3 }}>
-              . . .
-            </ThemedText>
+            <ThemedText style={{ fontWeight: 800, fontSize: 40, opacity: 0.3 }}>. . .</ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -152,16 +147,11 @@ const ExerciseDataTable = ({
                       {
                         backgroundColor: theme.colors.background,
                         color: theme.colors.onSurface,
-                        borderColor:
-                          focusedInputIndex === index
-                            ? theme.colors.primary
-                            : "transparent",
+                        borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
                       },
                     ]}
                     value={set.weight.toString()}
-                    onChangeText={(text) =>
-                      handleInputChange(index, "weight", text)
-                    }
+                    onChangeText={(text) => handleInputChange(index, "weight", text)}
                     keyboardType="numeric"
                     selectTextOnFocus={true}
                     maxLength={3}
@@ -187,16 +177,11 @@ const ExerciseDataTable = ({
                       {
                         backgroundColor: theme.colors.background,
                         color: theme.colors.onSurface,
-                        borderColor:
-                          focusedInputIndex === index
-                            ? theme.colors.primary
-                            : "transparent",
+                        borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
                       },
                     ]}
                     value={set.reps.toString()}
-                    onChangeText={(text) =>
-                      handleInputChange(index, "reps", text)
-                    }
+                    onChangeText={(text) => handleInputChange(index, "reps", text)}
                     keyboardType="numeric"
                     selectTextOnFocus={true}
                     maxLength={3}
@@ -259,19 +244,9 @@ const ExerciseDataTable = ({
             <View style={styles.entryColumn}>
               <ThemedText style={styles.headerText} type="menu" />
               {sets.map((_, index) => (
-                <View
-                  style={[styles.inputRow, { padding: 0, marginLeft: -20 }]}
-                  key={index}
-                >
-                  <TouchableOpacity
-                    style={{ height: 28 }}
-                    onPressIn={(event) => openSetMenu(index, event)}
-                  >
-                    <MaterialIcons
-                      name="more-vert"
-                      size={24}
-                      color={theme.colors.onSurface}
-                    />
+                <View style={[styles.inputRow, { padding: 0, marginLeft: -20 }]} key={index}>
+                  <TouchableOpacity style={{ height: 28 }} onPressIn={(event) => openSetMenu(index, event)}>
+                    <MaterialIcons name="more-vert" size={24} color={theme.colors.onSurface} />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -289,9 +264,7 @@ const ExerciseDataTable = ({
               }}
               hitSlop={{ top: 24, bottom: 10, left: 10, right: 10 }}
             >
-              <ThemedText style={{ color: "#007AFF", fontSize: 20 }}>
-                + Add Set
-              </ThemedText>
+              <ThemedText style={{ color: "#007AFF", fontSize: 20 }}>+ Add Set</ThemedText>
             </TouchableOpacity>
           </View>
 

@@ -8,29 +8,23 @@ import { Link } from "expo-router";
 
 import Animated from "react-native-reanimated";
 
-const ExerciseListItem = ({ image, exercise }) => {
+const ExerciseListItem = ({ style }) => {
   const theme = useTheme();
   const navigation = useNavigation();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate("details", { ...exercise })}>
-      <View style={[styles.container, { backgroundColor: theme.colors.surfaceVariant }]}>
-        <ImageBackground style={{ borderRadius: 6, backgroundColor: "#fff", height: 50, width: 50 }}>
-          <Animated.Image source={image} style={styles.image} sharedTransitionTag={exercise.id} />
-        </ImageBackground>
-
-        <View style={styles.textContentContainer}>
-          <ThemedText type="default">{capitalizeFirstLetter(exercise.name)}</ThemedText>
-          <ThemedText
-            style={{
-              fontSize: 26,
-              lineHeight: 32,
-              marginBottom: -8,
-              color: theme.colors.primary,
-            }}
-          >
-            {capitalizeFirstLetter(exercise.target)}
-          </ThemedText>
-        </View>
+    <TouchableOpacity style={style}>
+      <View style={styles.textContentContainer}>
+        <ThemedText type="default">{capitalizeFirstLetter("HELLO")}</ThemedText>
+        <ThemedText
+          style={{
+            fontSize: 26,
+            lineHeight: 32,
+            marginBottom: -8,
+            color: theme.colors.primary,
+          }}
+        >
+          {capitalizeFirstLetter("HELLO")}
+        </ThemedText>
       </View>
     </TouchableOpacity>
   );

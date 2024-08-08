@@ -23,9 +23,14 @@ import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableS
 import * as Haptics from "expo-haptics";
 
 export default function EditModal() {
-  const { id: workoutId } = useLocalSearchParams();
-  const { workouts } = useStore();
-  let workoutData = workouts.find((workout) => workout.id === workoutId);
+  let now = Date.now();
+  let id = now.toString();
+  const workoutData = {
+    id: id,
+    duration: 0,
+    calories: 0,
+    exercises: [],
+  };
   const updateWorkout = useStore((state) => state.updateWorkout);
 
   const [workoutFormState, setWorkoutFormState] = useState(workoutData);
@@ -222,7 +227,6 @@ export default function EditModal() {
               <ThemedText>+Add Exercise</ThemedText>
             </TouchableOpacity>
           )}
-          ListHeaderComponent={() => <SettingCard workout={workoutFormState} />} // some error made this fail? new arch?
           contentContainerStyle={{ paddingBottom: 200 }}
           ref={scrollViewRef}
           onref={(ref) => (scrollViewRef = ref)}
