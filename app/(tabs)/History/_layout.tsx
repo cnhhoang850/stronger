@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { useTheme } from "react-native-paper";
-import { Appearance } from "react-native";
+import { Appearance, Text } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
@@ -26,7 +26,14 @@ export default function HomeLayout() {
           headerBlurEffect: "regular",
         }}
       />
-      <Stack.Screen name="modal" options={{ title: "Edit workout", presentation: "modal" }} />
+      <Stack.Screen name="modal" options={{ title: "Edit workout" }} />
+      <Stack.Screen
+        name="exerciseSelector"
+        options={{
+          headerShown: false,
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 }

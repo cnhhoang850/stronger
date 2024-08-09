@@ -62,7 +62,6 @@ export default function Details() {
   const renderHeaderImage = (() => (
     <>
       <AnimatedExpoImage
-        sharedTransitionTag={id}
         source={ExerciseWebps["webp" + id]}
         style={{ width: 260, height: 260 }}
       />

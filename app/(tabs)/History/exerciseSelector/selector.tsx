@@ -11,7 +11,7 @@ import { FlashList } from "@shopify/flash-list";
 import { sort } from "fast-sort";
 import * as Haptics from "expo-haptics";
 
-export default function App() {
+export default function ExerciseSelector() {
   const theme = useTheme();
   const exerciseData = useStore((state) => state.exercises);
 
@@ -98,6 +98,7 @@ export default function App() {
           return typeof item === "string" ? "sectionHeader" : "row";
         }}
         contentContainerStyle={styles.sectionListContainer}
+        onViewableItemsChanged={handleViewableItemsChanged}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
         }}

@@ -7,7 +7,7 @@ import { Card as PaperCard, Button as PaperButton } from "react-native-paper";
 import { ThemedText } from "@/components/ThemedText";
 import IconText from "@/components/IconText";
 import useStore from "@/store/useStore";
-import LinkButton from "@/components/LinkButton";
+import ForwardButton from "@/components/ForwardButton";
 
 function WorkoutHistoryCard({ workout }) {
   const id = workout.id.toString();
@@ -17,12 +17,14 @@ function WorkoutHistoryCard({ workout }) {
       <PaperCard.Content>
         <View style={styles.headerContainer}>
           <View>
-            <ThemedText type="defaultSemiBold">{getWorkoutTimeCategory(workout.time)}</ThemedText>
+            <ThemedText type="defaultSemiBold">
+              {getWorkoutTimeCategory(workout.time)}
+            </ThemedText>
 
             <ThemedText type="subtitle">{formatDate(workout.time)}</ThemedText>
           </View>
 
-          <LinkButton path="/(tabs)/history/modal" params={{ id: id }} />
+          <ForwardButton path="/(tabs)/history/modal" params={{ id: id }} />
         </View>
 
         <View style={styles.columnContainer}>
@@ -43,13 +45,19 @@ function WorkoutHistoryCard({ workout }) {
 
             {workout.exercises.map((exercise, index) => (
               <ThemedText key={index} type="defaultSemiTrans">
-                {exercise.sets.reduce((acc, curr) => acc + curr.reps * curr.weight, 0) + " kg"}
+                {exercise.sets.reduce(
+                  (acc, curr) => acc + curr.reps * curr.weight,
+                  0,
+                ) + " kg"}
               </ThemedText>
             ))}
           </View>
 
           <View style={styles.entryColumn}>
-            <IconText iconName="lightning-bolt" text={workout.calories + " cal"} />
+            <IconText
+              iconName="lightning-bolt"
+              text={workout.calories + " cal"}
+            />
             <ThemedText type="subtitleSemiBold">{"Calories"}</ThemedText>
 
             {workout.exercises.map((exercise, index) => (
@@ -76,6 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   iconContainer: {
     display: "flex",

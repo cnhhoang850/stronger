@@ -4,7 +4,10 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
+import {
+  MD3LightTheme as DefaultPaperTheme,
+  PaperProvider,
+} from "react-native-paper";
 
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -129,7 +132,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+        <PaperProvider
+          theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}
+        >
           <Stack
             screenOptions={{
               headerStyle: {
@@ -142,11 +147,16 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="newWorkout" options={{ headerShown: false, presentation: "modal" }} />
+            <Stack.Screen
+              name="newWorkout"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
 
-          <ExerciseListItem style={{ position: "absolute", bottom: 100, backgroundColor: "#000" }} />
+          <ExerciseListItem
+            style={{ position: "absolute", bottom: 100, backgroundColor: "#000" }}
+          />
         </PaperProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

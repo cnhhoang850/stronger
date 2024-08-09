@@ -1,4 +1,11 @@
-import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy } from "react";
+import React, {
+  useRef,
+  useState,
+  useLayoutEffect,
+  useEffect,
+  Suspense,
+  lazy,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -9,6 +16,7 @@ import {
   ActionSheetIOS,
   TextInput,
   Dimensions,
+  Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
 import { useNavigation, useLocalSearchParams } from "expo-router";
@@ -16,9 +24,14 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
-import { ScaleDecorator, OpacityDecorator } from "react-native-draggable-flatlist";
+import {
+  ScaleDecorator,
+  OpacityDecorator,
+} from "react-native-draggable-flatlist";
 import DraggableFlatList from "react-native-draggable-flatlist";
-const ExerciseDataTable = lazy(() => import("@/components/editModal/ExerciseDataTable"));
+const ExerciseDataTable = lazy(
+  () => import("@/components/editModal/ExerciseDataTable"),
+);
 import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 import * as Haptics from "expo-haptics";
 
@@ -35,9 +48,10 @@ export default function EditModal() {
   const selectedExerciseId = useRef(null);
 
   let scrollViewRef = useRef(null);
-
   const navigation = useNavigation();
   const theme = useTheme();
+
+  const [exerciseListModalVisible, setExerciseListModalVisible] = useState(false);
 
   // Update navigation header
   useLayoutEffect(() => {
@@ -55,7 +69,9 @@ export default function EditModal() {
           <PaperButton
             mode="contained"
             style={{
-              backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
+              backgroundColor: formChanged
+                ? theme.colors.success
+                : theme.colors.inverseOnSurface,
               height: 38,
               marginBottom: 4,
             }}
@@ -81,7 +97,11 @@ export default function EditModal() {
   useEffect(() => {
     const listener = Keyboard.addListener("keyboardDidShow", (e) => {
       const keyboardHeight = e.endCoordinates.height;
-      TextInput.State.currentlyFocusedInput().measure((originX, originY, width, height, pageX, pageY) => {
+      const focusedInput = TextInput.State.currentlyFocusedInput();
+      if (!focusedInput) {
+        return;
+      }
+      focusedInput.measure((originX, originY, width, height, pageX, pageY) => {
         const yFromTop = pageY;
         const componentHeight = height;
         const screenHeight = Dimensions.get("window").height;
@@ -121,7 +141,9 @@ export default function EditModal() {
 
   const openMenu = (exerciseId, event, fadeOut) => {
     selectedExerciseId.current = exerciseId;
-    const selectedExercise = workoutFormState.exercises.find((exercise) => exercise.id === exerciseId);
+    const selectedExercise = workoutFormState.exercises.find(
+      (exercise) => exercise.id === exerciseId,
+    );
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: ["Delete", "Rename", "Remove all sets", "Cancel"],
@@ -153,6 +175,9 @@ export default function EditModal() {
   };
 
   const handleAddExercise = () => {
+    navigation.navigate("exerciseSelector");
+    setExerciseListModalVisible(true);
+
     const newExercise = {
       id: new Date().getTime().toString(),
       name: "New Exercise",
