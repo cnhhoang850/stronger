@@ -39,12 +39,12 @@ export default function EditModal() {
   const { id: workoutId } = useLocalSearchParams();
   const { workouts } = useStore();
   let workoutData = workouts.find((workout) => workout.id === workoutId);
-  const updateWorkout = useStore((state) => state.updateWorkout);
-
   const [workoutFormState, setWorkoutFormState] = useState(workoutData);
   const workoutFormData = useRef(workoutData);
+  const updateWorkout = useStore((state) => state.updateWorkout);
   const [formChanged, setFormChanged] = useState(false);
 
+  const [newExerciseSelected, setNewExerciseSelected] = useState(null);
   const selectedExerciseId = useRef(null);
 
   let scrollViewRef = useRef(null);
@@ -172,7 +172,12 @@ export default function EditModal() {
   };
 
   const handleAddExercise = () => {
-    navigation.navigate("exerciseSelector");
+    navigation.navigate("exerciseSelector", {
+      onGoBack: (data) => {
+        // Callback function to handle data from exercise selector
+        setNewExerciseSelected(data);
+      },
+    });
     const newExercise = {
       id: new Date().getTime().toString(),
       name: "New Exercise",
