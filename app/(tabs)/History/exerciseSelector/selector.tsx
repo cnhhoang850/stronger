@@ -3,7 +3,7 @@ import useStore from "@/store/useStore";
 import { StyleSheet, View } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useNavigation } from "expo-router";
+import { useLocalSearchParams, useGlobalSearchParams, useNavigation } from "expo-router";
 import { useTheme } from "react-native-paper";
 import ExerciseImages from "@/assets/exercises/images";
 import ExerciseListItem from "@/components/ExerciseListItem";
@@ -12,6 +12,8 @@ import { sort } from "fast-sort";
 import * as Haptics from "expo-haptics";
 
 export default function ExerciseSelector() {
+  const params = useGlobalSearchParams(); // might cause extaneous updates
+  console.log(params);
   const theme = useTheme();
   const exerciseData = useStore((state) => state.exercises);
 
@@ -21,6 +23,7 @@ export default function ExerciseSelector() {
   const [exercisesState, setExercisesState] = useState(
     preprocessDataFlashList(exerciseData, searchVal, filter, sortOrder),
   );
+  const [selectedExercises, setSelectedExercises] = useState(null);
 
   const navigation = useNavigation();
 
@@ -29,14 +32,7 @@ export default function ExerciseSelector() {
       headerSearchBarOptions: {
         hideWhenScrolling: false,
         onChangeText: (event) => {
-          setExercisesState(
-            preprocessDataFlashList(
-              exerciseData,
-              event.nativeEvent.text,
-              filter,
-              sortOrder,
-            ),
-          );
+          setExercisesState(preprocessDataFlashList(exerciseData, event.nativeEvent.text, filter, sortOrder));
         },
       },
     });
@@ -85,9 +81,7 @@ export default function ExerciseSelector() {
   };
 
   return (
-    <ThemedView
-      style={{ backgroundColor: theme.colors.background, height: "100%" }}
-    >
+    <ThemedView style={{ backgroundColor: theme.colors.background, height: "100%" }}>
       <FlashList
         contentInsetAdjustmentBehavior="automatic"
         data={exercisesState}
@@ -135,8 +129,7 @@ const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   const sectionMap = {};
 
   filteredData.forEach((item) => {
-    const sectionKey =
-      filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
+    const sectionKey = filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
     if (!sectionMap[sectionKey]) {
       sectionMap[sectionKey] = [];
     }

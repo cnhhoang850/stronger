@@ -1,11 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useLayoutEffect,
-  useEffect,
-  Suspense,
-  lazy,
-} from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy } from "react";
 import {
   StyleSheet,
   View,
@@ -19,19 +12,14 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import { useNavigation, useLocalSearchParams } from "expo-router";
+import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
-import {
-  ScaleDecorator,
-  OpacityDecorator,
-} from "react-native-draggable-flatlist";
+import { ScaleDecorator, OpacityDecorator } from "react-native-draggable-flatlist";
 import DraggableFlatList from "react-native-draggable-flatlist";
-const ExerciseDataTable = lazy(
-  () => import("@/components/editModal/ExerciseDataTable"),
-);
+const ExerciseDataTable = lazy(() => import("@/components/editModal/ExerciseDataTable"));
 import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 import * as Haptics from "expo-haptics";
 
@@ -51,6 +39,8 @@ export default function EditModal() {
   const navigation = useNavigation();
   const theme = useTheme();
 
+  const router = useRouter();
+
   // Update navigation header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,9 +57,7 @@ export default function EditModal() {
           <PaperButton
             mode="contained"
             style={{
-              backgroundColor: formChanged
-                ? theme.colors.success
-                : theme.colors.inverseOnSurface,
+              backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
               height: 38,
               marginBottom: 4,
             }}
@@ -138,9 +126,7 @@ export default function EditModal() {
 
   const openContextMenu = (exerciseId, event, fadeOut) => {
     selectedExerciseId.current = exerciseId;
-    const selectedExercise = workoutFormState.exercises.find(
-      (exercise) => exercise.id === exerciseId,
-    );
+    const selectedExercise = workoutFormState.exercises.find((exercise) => exercise.id === exerciseId);
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: ["Delete", "Rename", "Remove all sets", "Cancel"],
@@ -172,12 +158,13 @@ export default function EditModal() {
   };
 
   const handleAddExercise = () => {
-    navigation.navigate("exerciseSelector", {
-      onGoBack: (data) => {
-        // Callback function to handle data from exercise selector
-        setNewExerciseSelected(data);
+    router.push({
+      pathname: "/(tabs)/history/exerciseSelector",
+      params: {
+        onGoBack: "something",
       },
     });
+
     const newExercise = {
       id: new Date().getTime().toString(),
       name: "New Exercise",

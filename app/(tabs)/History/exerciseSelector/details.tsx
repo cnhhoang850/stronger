@@ -24,46 +24,13 @@ export default function Details() {
 
   const { id, name, instructions, target, secondaryMuscles } = exercise;
   const muscles = [target, ...secondaryMuscles];
-  const frontMuscles = [];
-  const backMuscles = [];
-
-  muscles.forEach((muscle) => {
-    const value = JSON.parse(JSON.stringify(bodyMapDict[muscle.toLowerCase()]));
-
-    const flag = value.flag;
-    if (muscle === target) {
-      value.target = true;
-    }
-    if (flag === "front") {
-      frontMuscles.push(value);
-    } else if (flag === "back") {
-      backMuscles.push(value);
-    } else if (flag === "both") {
-      frontMuscles.push(value);
-      backMuscles.push(value);
-    } else {
-      console.log("Muscle not found in bodyMapDict " + muscle);
-    }
-  });
-
-  const mapMuscles = (muscles) => {
-    return muscles.map((muscle) => ({
-      slug: muscle.group,
-      intensity: muscle.target ? 2 : 1,
-    }));
-  };
-
-  const frontMuscleData = mapMuscles(frontMuscles);
-  const backMuscleData = mapMuscles(backMuscles);
+  const { frontMuscleData, backMuscleData } = mapMuscles(muscles, target);
 
   const AnimatedExpoImage = Animated.createAnimatedComponent(ExpoImage);
 
   const renderHeaderImage = (() => (
     <>
-      <AnimatedExpoImage
-        source={ExerciseWebps["webp" + id]}
-        style={{ width: 260, height: 260 }}
-      />
+      <AnimatedExpoImage source={ExerciseWebps["webp" + id]} style={{ width: 260, height: 260 }} />
     </>
   ))();
 
@@ -105,11 +72,7 @@ export default function Details() {
         </ThemedText>
         {secondaryMuscles.map((muscle) => {
           return (
-            <ThemedText
-              style={{ color: "rgba(64, 167, 235, 100)" }}
-              key={muscle}
-              type="subtitle"
-            >
+            <ThemedText style={{ color: "rgba(64, 167, 235, 100)" }} key={muscle} type="subtitle">
               {capitalizeFirstLetter(muscle)}
             </ThemedText>
           );
@@ -164,3 +127,38 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
+
+function mapMuscles(muscles, target) {
+  const frontMuscles = [];
+  const backMuscles = [];
+
+  muscles.forEach((muscle) => {
+    const value = JSON.parse(JSON.stringify(bodyMapDict[muscle.toLowerCase()]));
+
+    const flag = value.flag;
+    if (muscle === target) {
+      value.target = true;
+    }
+    if (flag === "front") {
+      frontMuscles.push(value);
+    } else if (flag === "back") {
+      backMuscles.push(value);
+    } else if (flag === "both") {
+      frontMuscles.push(value);
+      backMuscles.push(value);
+    } else {
+      console.log("Muscle not found in bodyMapDict " + muscle);
+    }
+  });
+
+  const mapMuscles = (muscles) => {
+    return muscles.map((muscle) => ({
+      slug: muscle.group,
+      intensity: muscle.target ? 2 : 1,
+    }));
+  };
+
+  const frontMuscleData = mapMuscles(frontMuscles);
+  const backMuscleData = mapMuscles(backMuscles);
+  return { frontMuscleData, backMuscleData };
+}
