@@ -1,5 +1,11 @@
 import type { PropsWithChildren, ReactElement } from "react";
-import { View, StyleSheet, useColorScheme, ScrollView, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  useColorScheme,
+  ScrollView,
+  Dimensions,
+} from "react-native";
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -19,7 +25,11 @@ type Props = PropsWithChildren<{
 
 const { width } = Dimensions.get("window");
 
-export default function ParallaxScrollView({ children, headerImage, headerBackgroundColor }: Props) {
+export default function ParallaxScrollView({
+  children,
+  headerImage,
+  headerBackgroundColor,
+}: Props) {
   const colorScheme = useColorScheme();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
@@ -36,10 +46,18 @@ export default function ParallaxScrollView({ children, headerImage, headerBackgr
           ),
         },
         {
-          scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
+          scale: interpolate(
+            scrollOffset.value,
+            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
+            [2, 1, 1],
+          ),
         },
       ],
-      //opacity: interpolate(scrollOffset.value, [0, HEADER_HEIGHT / 2, HEADER_HEIGHT], [0.9, 0.5, 0]),
+      opacity: interpolate(
+        scrollOffset.value,
+        [0, HEADER_HEIGHT / 2, HEADER_HEIGHT],
+        [0.9, 0.5, 0],
+      ),
     };
   });
 
@@ -55,13 +73,19 @@ export default function ParallaxScrollView({ children, headerImage, headerBackgr
   });
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.parallaxBackground }}>
       <Animated.ScrollView
         contentInsetAdjustmentBehavior="automatic"
         ref={scrollRef}
         scrollEventThrottle={16}
       >
-        <Animated.View style={[styles.header, { backgroundColor: "#fff" }, headerAnimatedStyle]}>
+        <Animated.View
+          style={[
+            styles.header,
+            { backgroundColor: "#fff" },
+            headerAnimatedStyle,
+          ]}
+        >
           {headerImage}
         </Animated.View>
         <Animated.View

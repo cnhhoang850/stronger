@@ -51,8 +51,6 @@ export default function EditModal() {
   const navigation = useNavigation();
   const theme = useTheme();
 
-  const [exerciseListModalVisible, setExerciseListModalVisible] = useState(false);
-
   // Update navigation header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -93,7 +91,6 @@ export default function EditModal() {
   }, [navigation, formChanged]);
 
   const offsetRef = useRef({ value: 0 });
-
   useEffect(() => {
     const listener = Keyboard.addListener("keyboardDidShow", (e) => {
       const keyboardHeight = e.endCoordinates.height;
@@ -139,7 +136,7 @@ export default function EditModal() {
     setWorkoutFormState({ ...workoutFormData.current });
   };
 
-  const openMenu = (exerciseId, event, fadeOut) => {
+  const openContextMenu = (exerciseId, event, fadeOut) => {
     selectedExerciseId.current = exerciseId;
     const selectedExercise = workoutFormState.exercises.find(
       (exercise) => exercise.id === exerciseId,
@@ -176,8 +173,6 @@ export default function EditModal() {
 
   const handleAddExercise = () => {
     navigation.navigate("exerciseSelector");
-    setExerciseListModalVisible(true);
-
     const newExercise = {
       id: new Date().getTime().toString(),
       name: "New Exercise",
@@ -218,7 +213,7 @@ export default function EditModal() {
                 offsetRef={offsetRef}
                 exercise={item}
                 onFormChange={handleFormChange}
-                openExerciseMenu={openMenu}
+                openExerciseMenu={openContextMenu}
               />
             </TouchableOpacity>
           </ScaleDecorator>

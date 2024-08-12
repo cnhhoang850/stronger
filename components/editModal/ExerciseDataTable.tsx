@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Modal,
   Animated,
-  LayoutAnimation,
 } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
@@ -14,7 +13,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Card as PaperCard } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 
-const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExerciseMenu, offsetRef }) => {
+const ExerciseDataTable = ({
+  exercise,
+  scrollViewRef,
+  onFormChange,
+  openExerciseMenu,
+  offsetRef,
+}) => {
   const [sets, setSets] = useState(exercise.sets);
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -128,7 +133,9 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExercise
             style={{ position: "absolute", right: 0, paddingRight: 12 }}
             onPressIn={(event) => openExerciseMenu(exercise.id, event, fadeOut)}
           >
-            <ThemedText style={{ fontWeight: 800, fontSize: 40, opacity: 0.3 }}>. . .</ThemedText>
+            <ThemedText style={{ fontWeight: 800, fontSize: 40, opacity: 0.3 }}>
+              . . .
+            </ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -147,11 +154,16 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExercise
                       {
                         backgroundColor: theme.colors.background,
                         color: theme.colors.onSurface,
-                        borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
+                        borderColor:
+                          focusedInputIndex === index
+                            ? theme.colors.primary
+                            : "transparent",
                       },
                     ]}
                     value={set.weight.toString()}
-                    onChangeText={(text) => handleInputChange(index, "weight", text)}
+                    onChangeText={(text) =>
+                      handleInputChange(index, "weight", text)
+                    }
                     keyboardType="numeric"
                     selectTextOnFocus={true}
                     maxLength={3}
@@ -177,11 +189,16 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExercise
                       {
                         backgroundColor: theme.colors.background,
                         color: theme.colors.onSurface,
-                        borderColor: focusedInputIndex === index ? theme.colors.primary : "transparent",
+                        borderColor:
+                          focusedInputIndex === index
+                            ? theme.colors.primary
+                            : "transparent",
                       },
                     ]}
                     value={set.reps.toString()}
-                    onChangeText={(text) => handleInputChange(index, "reps", text)}
+                    onChangeText={(text) =>
+                      handleInputChange(index, "reps", text)
+                    }
                     keyboardType="numeric"
                     selectTextOnFocus={true}
                     maxLength={3}
@@ -244,9 +261,19 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExercise
             <View style={styles.entryColumn}>
               <ThemedText style={styles.headerText} type="menu" />
               {sets.map((_, index) => (
-                <View style={[styles.inputRow, { padding: 0, marginLeft: -20 }]} key={index}>
-                  <TouchableOpacity style={{ height: 28 }} onPressIn={(event) => openSetMenu(index, event)}>
-                    <MaterialIcons name="more-vert" size={24} color={theme.colors.onSurface} />
+                <View
+                  style={[styles.inputRow, { padding: 0, marginLeft: -20 }]}
+                  key={index}
+                >
+                  <TouchableOpacity
+                    style={{ height: 28 }}
+                    onPressIn={(event) => openSetMenu(index, event)}
+                  >
+                    <MaterialIcons
+                      name="more-vert"
+                      size={24}
+                      color={theme.colors.onSurface}
+                    />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -264,7 +291,9 @@ const ExerciseDataTable = ({ exercise, scrollViewRef, onFormChange, openExercise
               }}
               hitSlop={{ top: 24, bottom: 10, left: 10, right: 10 }}
             >
-              <ThemedText style={{ color: "#007AFF", fontSize: 20 }}>+ Add Set</ThemedText>
+              <ThemedText style={{ color: "#007AFF", fontSize: 20 }}>
+                + Add Set
+              </ThemedText>
             </TouchableOpacity>
           </View>
 

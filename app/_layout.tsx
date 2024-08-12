@@ -9,7 +9,6 @@ import {
   PaperProvider,
 } from "react-native-paper";
 
-import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -39,6 +38,7 @@ const paperTheme = {
     errorContainer: "rgb(255, 218, 214)",
     onErrorContainer: "rgb(65, 0, 2)",
     background: "#F5F5F7",
+    parallaxBackground: "#fff",
     onBackground: "rgb(26, 28, 30)",
     surface: "rgb(253, 252, 255)",
     onSurface: "rgb(26, 28, 30)",
@@ -86,6 +86,7 @@ const darkPaperTheme = {
     errorContainer: "rgb(147, 0, 10)",
     onErrorContainer: "rgb(255, 180, 171)",
     background: "rgb(0, 0, 0)",
+    paraBackground: "rgb(0, 0, 0)",
     onBackground: "rgb(227, 226, 230)",
     surface: "rgb(26, 28, 30)",
     onSurface: "rgb(227, 226, 230)",

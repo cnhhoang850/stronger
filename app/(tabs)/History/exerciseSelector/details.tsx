@@ -1,7 +1,6 @@
-import { StyleSheet, View, Image, Platform, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import ExerciseWebps from "@/assets/exercises/webps";
 import { Image as ExpoImage } from "expo-image";
 import { useLocalSearchParams } from "expo-router";

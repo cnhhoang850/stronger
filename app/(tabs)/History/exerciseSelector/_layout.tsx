@@ -16,6 +16,7 @@ export default function HomeLayout() {
       <Stack.Screen
         name="selector"
         options={{
+          title: "Select exercises",
           headerLargeTitle: false,
           headerTitle: (props) => <CustomTitle title={"Select exercises"} />,
         }}

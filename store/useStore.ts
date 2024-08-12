@@ -39,6 +39,7 @@ const loadWorkouts = () => {
 };
 
 const useStore = create((set) => ({
+  currentWorkout: {},
   exercises: loadExercises(),
   workouts: loadWorkouts(),
   updateWorkout: (id, newWorkout) => {

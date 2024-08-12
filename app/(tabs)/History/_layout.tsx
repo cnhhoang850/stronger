@@ -26,12 +26,21 @@ export default function HomeLayout() {
           headerBlurEffect: "regular",
         }}
       />
-      <Stack.Screen name="modal" options={{ title: "Edit workout" }} />
+      <Stack.Screen
+        name="modal"
+        options={{
+          title: "Edit workout",
+          headerTransparent: true,
+          headerBlurEffect: "regular",
+        }}
+      />
       <Stack.Screen
         name="exerciseSelector"
         options={{
           headerShown: false,
           presentation: "modal",
+          headerTransparent: true,
+          headerBlurEffect: "regular",
         }}
       />
     </Stack>
