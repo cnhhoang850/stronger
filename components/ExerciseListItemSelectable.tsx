@@ -37,6 +37,14 @@ const ExerciseListItem = ({ image, exercise, select }) => {
             {capitalizeFirstLetter(exercise.target)}
           </ThemedText>
         </View>
+
+        <BouncyCheckbox
+          iconStyle={{ borderColor: theme.colors.primary }}
+          innerIconStyle={{ borderWidth: 1, borderColor: theme.colors.onSurfaceDisabled }}
+          fillColor={theme.colors.primary}
+          style={{ height: 25 }}
+          onPress={(isChecked) => select(exercise, isChecked)}
+        />
       </View>
     </TouchableOpacity>
   );

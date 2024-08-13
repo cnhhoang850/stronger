@@ -6,7 +6,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
 import { useTheme } from "react-native-paper";
 import ExerciseImages from "@/assets/exercises/images";
-import ExerciseListItem from "@/components/ExerciseListItem";
+import ExerciseListItem from "@/components/ExerciseListItemSelectable";
 import { FlashList } from "@shopify/flash-list";
 import { sort } from "fast-sort";
 import * as Haptics from "expo-haptics";

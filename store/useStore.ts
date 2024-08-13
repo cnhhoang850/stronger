@@ -47,6 +47,7 @@ const useStore = create((set) => ({
       const updatedWorkouts = state.workouts.map((workout) => {
         if (workout.id === id) {
           // Update workout in local storage
+          // please add error handling when not finding id
           storage.set(id, JSON.stringify(newWorkout));
           return newWorkout;
         }

@@ -24,7 +24,8 @@ import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableS
 import * as Haptics from "expo-haptics";
 
 export default function EditModal() {
-  const { id: workoutId } = useLocalSearchParams();
+  const { id: forwardedWorkoutId } = useLocalSearchParams();
+  const workoutId = useRef(forwardedWorkoutId).current;
   const { workouts } = useStore();
 
   let workoutData = workouts.find((workout) => workout.id === workoutId);
@@ -111,6 +112,7 @@ export default function EditModal() {
   }, []);
 
   const handleSave = () => {
+    console.log(workoutFormState, workoutId);
     const newWorkout = { ...workoutFormData.current };
     updateWorkout(workoutId, newWorkout);
     setFormChanged(false);
@@ -168,7 +170,6 @@ export default function EditModal() {
   };
 
   const addSelectedExercise = async (exercises) => {
-    console.log(exercises);
     let newExercises = [];
     for (let i = 0; i < exercises.length; i++) {
       let curr = exercises[i];
@@ -182,16 +183,13 @@ export default function EditModal() {
       await new Promise((resolve) => setTimeout(resolve, 50));
     }
 
-    console.log();
-
     const updatedExercises = [...workoutFormData.current.exercises, ...newExercises];
 
     workoutFormData.current = {
       ...workoutFormData.current,
       exercises: updatedExercises,
     };
-
-    setWorkoutFormState({ ...workoutFormState, exercises: updatedExercises });
+    setWorkoutFormState({ ...workoutFormData.current, exercises: updatedExercises });
     setFormChanged(true);
   };
 
