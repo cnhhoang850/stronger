@@ -1,9 +1,9 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useRef } from "react";
 import useStore from "@/store/useStore";
 import { StyleSheet, View } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useNavigation } from "expo-router";
+import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
 import { useTheme } from "react-native-paper";
 import ExerciseImages from "@/assets/exercises/images";
 import ExerciseListItem from "@/components/ExerciseListItem";
@@ -13,34 +13,53 @@ import * as Haptics from "expo-haptics";
 
 export default function ExerciseSelector() {
   const theme = useTheme();
-  const exerciseData = useStore((state) => state.exercises);
-
   const [filter, setFilter] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchVal, setSearchVal] = useState("");
+  const exerciseData = useStore((state) => state.exercises);
   const [exercisesState, setExercisesState] = useState(
     preprocessDataFlashList(exerciseData, searchVal, filter, sortOrder),
   );
 
+  let selectedExercises = useRef([]).current;
+  const [addNumber, setAddNumber] = useState(selectedExercises);
+
   const navigation = useNavigation();
+
+  const handleSelectExercise = (exercise, isChecked) => {
+    if (isChecked) {
+      selectedExercises.push(exercise);
+    } else {
+      selectedExercises = selectedExercises.filter((item) => item.id !== exercise.id);
+    }
+    setAddNumber([...selectedExercises]);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerSearchBarOptions: {
         hideWhenScrolling: false,
         onChangeText: (event) => {
-          setExercisesState(
-            preprocessDataFlashList(
-              exerciseData,
-              event.nativeEvent.text,
-              filter,
-              sortOrder,
-            ),
-          );
+          setExercisesState(preprocessDataFlashList(exerciseData, event.nativeEvent.text, filter, sortOrder));
         },
       },
+      headerRight: () => (
+        <ThemedText
+          onPress={() => {
+            navigation.navigate({
+              name: "modal",
+              params: {
+                selectedExercises: JSON.stringify(selectedExercises),
+                merge: true,
+              },
+            });
+          }}
+        >
+          + Add {addNumber.length > 0 ? addNumber.length : ""}
+        </ThemedText>
+      ),
     });
-  }, [navigation]);
+  }, [navigation, addNumber]);
 
   const FlatlistItemSeparator = () => {
     return (
@@ -73,21 +92,15 @@ export default function ExerciseSelector() {
     }
 
     const source = `img${item.id}` as keyof typeof ExerciseImages;
-    return <ExerciseListItem image={ExerciseImages[source]} exercise={item} />;
-  };
-
-  const handleViewableItemsChanged = ({ viewableItems }) => {
-    viewableItems.forEach((viewableItem) => {
-      if (viewableItem.isViewable && typeof viewableItem.item === "string") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
-      }
-    });
+    return (
+      <View>
+        <ExerciseListItem select={handleSelectExercise} image={ExerciseImages[source]} exercise={item} />
+      </View>
+    );
   };
 
   return (
-    <ThemedView
-      style={{ backgroundColor: theme.colors.background, height: "100%" }}
-    >
+    <ThemedView style={{ backgroundColor: theme.colors.background, height: "100%" }}>
       <FlashList
         contentInsetAdjustmentBehavior="automatic"
         data={exercisesState}
@@ -98,7 +111,6 @@ export default function ExerciseSelector() {
           return typeof item === "string" ? "sectionHeader" : "row";
         }}
         contentContainerStyle={styles.sectionListContainer}
-        onViewableItemsChanged={handleViewableItemsChanged}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
         }}
@@ -135,8 +147,7 @@ const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   const sectionMap = {};
 
   filteredData.forEach((item) => {
-    const sectionKey =
-      filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
+    const sectionKey = filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
     if (!sectionMap[sectionKey]) {
       sectionMap[sectionKey] = [];
     }

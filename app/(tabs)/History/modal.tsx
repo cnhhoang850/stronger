@@ -1,11 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useLayoutEffect,
-  useEffect,
-  Suspense,
-  lazy,
-} from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy } from "react";
 import {
   StyleSheet,
   View,
@@ -19,37 +12,40 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import { useNavigation, useLocalSearchParams } from "expo-router";
+import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import SettingCard from "@/components/editModal/SettingCard";
-import {
-  ScaleDecorator,
-  OpacityDecorator,
-} from "react-native-draggable-flatlist";
+import { ScaleDecorator, OpacityDecorator } from "react-native-draggable-flatlist";
 import DraggableFlatList from "react-native-draggable-flatlist";
-const ExerciseDataTable = lazy(
-  () => import("@/components/editModal/ExerciseDataTable"),
-);
+const ExerciseDataTable = lazy(() => import("@/components/editModal/ExerciseDataTable"));
 import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 import * as Haptics from "expo-haptics";
 
 export default function EditModal() {
   const { id: workoutId } = useLocalSearchParams();
   const { workouts } = useStore();
+
   let workoutData = workouts.find((workout) => workout.id === workoutId);
   const [workoutFormState, setWorkoutFormState] = useState(workoutData);
   const workoutFormData = useRef(workoutData);
   const updateWorkout = useStore((state) => state.updateWorkout);
   const [formChanged, setFormChanged] = useState(false);
 
-  const [newExerciseSelected, setNewExerciseSelected] = useState(null);
   const selectedExerciseId = useRef(null);
 
   let scrollViewRef = useRef(null);
   const navigation = useNavigation();
   const theme = useTheme();
+  const params = useGlobalSearchParams();
+
+  React.useEffect(() => {
+    if (params?.selectedExercises && params.selectedExercises.length > 0) {
+      const selectedExercises = JSON.parse(params.selectedExercises);
+      addSelectedExercise(selectedExercises);
+    }
+  }, [params?.selectedExercises]);
 
   // Update navigation header
   useLayoutEffect(() => {
@@ -67,9 +63,7 @@ export default function EditModal() {
           <PaperButton
             mode="contained"
             style={{
-              backgroundColor: formChanged
-                ? theme.colors.success
-                : theme.colors.inverseOnSurface,
+              backgroundColor: formChanged ? theme.colors.success : theme.colors.inverseOnSurface,
               height: 38,
               marginBottom: 4,
             }}
@@ -138,9 +132,7 @@ export default function EditModal() {
 
   const openContextMenu = (exerciseId, event, fadeOut) => {
     selectedExerciseId.current = exerciseId;
-    const selectedExercise = workoutFormState.exercises.find(
-      (exercise) => exercise.id === exerciseId,
-    );
+    const selectedExercise = workoutFormState.exercises.find((exercise) => exercise.id === exerciseId);
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: ["Delete", "Rename", "Remove all sets", "Cancel"],
@@ -171,26 +163,35 @@ export default function EditModal() {
     //setMenuVisible(false);
   };
 
-  const handleAddExercise = () => {
-    navigation.navigate("exerciseSelector", {
-      onGoBack: (data) => {
-        // Callback function to handle data from exercise selector
-        setNewExerciseSelected(data);
-      },
-    });
-    const newExercise = {
-      id: new Date().getTime().toString(),
-      name: "New Exercise",
-      sets: [],
-    };
+  const showSelector = () => {
+    navigation.navigate("exerciseSelector");
+  };
 
-    const newExercises = [...workoutFormData.current.exercises, newExercise];
+  const addSelectedExercise = async (exercises) => {
+    console.log(exercises);
+    let newExercises = [];
+    for (let i = 0; i < exercises.length; i++) {
+      let curr = exercises[i];
+      const newExercise = {
+        id: new Date().getTime().toString(),
+        name: curr.name,
+        sets: [],
+      };
+
+      newExercises.push(newExercise);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    console.log();
+
+    const updatedExercises = [...workoutFormData.current.exercises, ...newExercises];
+
     workoutFormData.current = {
       ...workoutFormData.current,
-      exercises: newExercises,
+      exercises: updatedExercises,
     };
 
-    setWorkoutFormState({ ...workoutFormState, exercises: newExercises });
+    setWorkoutFormState({ ...workoutFormState, exercises: updatedExercises });
     setFormChanged(true);
   };
 
@@ -235,7 +236,7 @@ export default function EditModal() {
           keyExtractor={(item, index) => item.id} //for animated.view
           ListFooterComponent={() => (
             <TouchableOpacity
-              onPress={handleAddExercise}
+              onPress={showSelector}
               style={{
                 backgroundColor: theme.colors.surface,
                 padding: 16,

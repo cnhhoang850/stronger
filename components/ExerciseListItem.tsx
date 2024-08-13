@@ -1,32 +1,18 @@
 import React, { memo } from "react";
-import {
-  TouchableOpacity,
-  View,
-  Image,
-  ImageBackground,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { TouchableOpacity, View, Image, ImageBackground, Text, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import capitalizeFirstLetter from "@/utils/capitalizeFirst";
-
 import Animated from "react-native-reanimated";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
-const ExerciseListItem = ({ image, exercise }) => {
+const ExerciseListItem = ({ image, exercise, select }) => {
   const theme = useTheme();
   const navigation = useNavigation();
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("details", { ...exercise })}
-    >
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: theme.colors.surfaceVariant },
-        ]}
-      >
+    <TouchableOpacity onPress={() => navigation.navigate("details", { ...exercise })}>
+      <View style={[styles.container, { backgroundColor: theme.colors.surfaceVariant }]}>
         <ImageBackground
           style={{
             borderRadius: 6,
@@ -35,17 +21,11 @@ const ExerciseListItem = ({ image, exercise }) => {
             width: 50,
           }}
         >
-          <Animated.Image
-            source={image}
-            style={styles.image}
-            sharedTransitionTag={exercise.id}
-          />
+          <Animated.Image source={image} style={styles.image} sharedTransitionTag={exercise.id} />
         </ImageBackground>
 
         <View style={styles.textContentContainer}>
-          <ThemedText type="default">
-            {capitalizeFirstLetter(exercise.name)}
-          </ThemedText>
+          <ThemedText type="default">{capitalizeFirstLetter(exercise.name)}</ThemedText>
           <ThemedText
             style={{
               fontSize: 26,
@@ -57,6 +37,14 @@ const ExerciseListItem = ({ image, exercise }) => {
             {capitalizeFirstLetter(exercise.target)}
           </ThemedText>
         </View>
+
+        <BouncyCheckbox
+          iconStyle={{ borderColor: theme.colors.primary }}
+          innerIconStyle={{ borderWidth: 1, borderColor: theme.colors.onSurfaceDisabled }}
+          fillColor={theme.colors.primary}
+          style={{ height: 25 }}
+          onPress={(isChecked) => select(exercise, isChecked)}
+        />
       </View>
     </TouchableOpacity>
   );
