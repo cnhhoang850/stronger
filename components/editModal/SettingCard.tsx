@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     marginBottom: 26,
     marginLeft: 16,
     marginRight: 16,
+    marginTop: 26,
   },
   cardRow: {
     display: "flex",
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     padding: 8,
     paddingLeft: 0,
     margin: 0,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderStyle: "solid",
     borderBottomColor: "#d3d3d3",
     alignContent: "center",

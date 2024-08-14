@@ -5,20 +5,31 @@ import formatDuration from "@/utils/secToStr";
 import { Card as PaperCard, Button as PaperButton } from "react-native-paper";
 import { ThemedText } from "@/components/ThemedText";
 
-export default function SettingCard({ workout }) {
+type field = {
+  title: string;
+  value: string;
+  type: string;
+};
+
+type FormBoxProps = {
+  fields: field[];
+};
+
+export default function FormBox({ fields }: FormBoxProps) {
   return (
     <PaperCard mode="contained" style={styles.cardContainer}>
-      <View style={styles.cardRow}>
-        <ThemedText type="menu">{getWorkoutTimeCategory(workout.time)}</ThemedText>
-      </View>
-      <View style={styles.cardRow}>
-        <ThemedText type="menu">Date</ThemedText>
-        <ThemedText type="default">{formatDate(workout.time)}</ThemedText>
-      </View>
-      <View style={{ ...styles.cardRow, borderBottomWidth: 0 }}>
-        <ThemedText type="menu">Duration</ThemedText>
-        <ThemedText type="default">{formatDuration(workout.duration)}</ThemedText>
-      </View>
+      {fields.map((field, index) => (
+        <View
+          key={index}
+          style={{
+            ...styles.cardRow,
+            borderBottomWidth: index === fields.length - 1 ? 0 : 1,
+          }}
+        >
+          <ThemedText type="menu">{field.title}</ThemedText>
+          <ThemedText type="default">{field.value}</ThemedText>
+        </View>
+      ))}
     </PaperCard>
   );
 }
@@ -29,12 +40,15 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     paddingLeft: 12,
     marginBottom: 26,
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 32,
   },
   cardRow: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 40,
+    height: 44,
     lineHeight: 16,
     padding: 8,
     paddingLeft: 0,

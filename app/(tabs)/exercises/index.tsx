@@ -10,6 +10,7 @@ import ExerciseListItem from "@/components/ExerciseListItem";
 import { FlashList } from "@shopify/flash-list";
 import { sort } from "fast-sort";
 import * as Haptics from "expo-haptics";
+import { SFSymbol } from "@/components/SFSymbols";
 
 export default function App() {
   const theme = useTheme();
@@ -29,16 +30,29 @@ export default function App() {
       headerSearchBarOptions: {
         hideWhenScrolling: false,
         onChangeText: (event) => {
-          setExercisesState(
-            preprocessDataFlashList(
-              exerciseData,
-              event.nativeEvent.text,
-              filter,
-              sortOrder,
-            ),
-          );
+          setExercisesState(preprocessDataFlashList(exerciseData, event.nativeEvent.text, filter, sortOrder));
         },
       },
+      headerRight: () => (
+        <ThemedText
+          style={{
+            paddingRight: 6,
+          }}
+          type="system"
+          onPress={() => {
+            console.log("pressed");
+
+            navigation.navigate("modal");
+          }}
+        >
+          <SFSymbol name="plus" size={24} style={{ width: 32, height: 32 }} />
+        </ThemedText>
+      ),
+      headerLeft: () => (
+        <ThemedText type="system" onPress={() => {}}>
+          Edit
+        </ThemedText>
+      ),
     });
   }, [navigation]);
 
@@ -85,9 +99,7 @@ export default function App() {
   };
 
   return (
-    <ThemedView
-      style={{ backgroundColor: theme.colors.background, height: "100%" }}
-    >
+    <ThemedView style={{ backgroundColor: theme.colors.background, height: "100%" }}>
       <FlashList
         contentInsetAdjustmentBehavior="automatic"
         data={exercisesState}
@@ -134,8 +146,7 @@ const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   const sectionMap = {};
 
   filteredData.forEach((item) => {
-    const sectionKey =
-      filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
+    const sectionKey = filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
     if (!sectionMap[sectionKey]) {
       sectionMap[sectionKey] = [];
     }

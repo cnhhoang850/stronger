@@ -13,7 +13,8 @@ export type ThemedTextProps = TextProps & {
     | "subtitle"
     | "link"
     | "subtitleSemiBold"
-    | "menu";
+    | "menu"
+    | "system";
 };
 
 export function ThemedText({ style, lightColor, darkColor, type = "default", ...rest }: ThemedTextProps) {
@@ -31,6 +32,7 @@ export function ThemedText({ style, lightColor, darkColor, type = "default", ...
         type === "link" ? styles.link : undefined,
         type === "menu" ? styles.menu : undefined,
         type === "subtitleSemiBold" ? styles.subtitleSemiBold : undefined,
+        type === "system" ? { color: "#007AFF", fontSize: 20 } : undefined,
         style,
       ]}
       {...rest}
@@ -41,7 +43,7 @@ export function ThemedText({ style, lightColor, darkColor, type = "default", ...
 const FONT_SIZES = {
   small: 12,
   medium: 15,
-  default: 16,
+  default: 17,
   large: 22,
   extraLarge: 32,
 };

@@ -29,6 +29,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           marginBottom: 4,
+          fontSize: 10,
         },
         tabBarItemStyle: {
           marginTop: 8,

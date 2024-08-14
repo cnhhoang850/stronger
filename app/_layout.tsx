@@ -4,10 +4,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import {
-  MD3LightTheme as DefaultPaperTheme,
-  PaperProvider,
-} from "react-native-paper";
+import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useTheme } from "react-native-paper";
@@ -101,7 +98,8 @@ const darkPaperTheme = {
     inversePrimary: "rgb(0, 95, 175)",
     elevation: {
       level0: "transparent",
-      level1: "rgb(33, 37, 41)",
+      level1: "#1C1C1E",
+      onLevel1: "rgb(46,46,47)",
       level2: "rgb(37, 42, 48)",
       level3: "rgb(41, 47, 55)",
       level4: "rgb(43, 49, 57)",
@@ -133,9 +131,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <PaperProvider
-          theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}
-        >
+        <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
           <Stack
             screenOptions={{
               headerStyle: {
@@ -148,16 +144,11 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="newWorkout"
-              options={{ headerShown: false, presentation: "modal" }}
-            />
+            <Stack.Screen name="newWorkout" options={{ headerShown: false, presentation: "modal" }} />
             <Stack.Screen name="+not-found" />
           </Stack>
 
-          <ExerciseListItem
-            style={{ position: "absolute", bottom: 100, backgroundColor: "#000" }}
-          />
+          <ExerciseListItem style={{ position: "absolute", bottom: 100, backgroundColor: "#000" }} />
         </PaperProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

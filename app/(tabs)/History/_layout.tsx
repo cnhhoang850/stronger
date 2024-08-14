@@ -38,7 +38,7 @@ export default function HomeLayout() {
         name="exerciseSelector"
         options={{
           headerShown: false,
-          presentation: "modal",
+          presentation: "formSheet",
           headerTransparent: true,
           headerBlurEffect: "regular",
         }}

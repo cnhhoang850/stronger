@@ -45,6 +45,7 @@ export default function ExerciseSelector() {
       },
       headerRight: () => (
         <ThemedText
+          type="system"
           onPress={() => {
             navigation.navigate({
               name: "modal",
