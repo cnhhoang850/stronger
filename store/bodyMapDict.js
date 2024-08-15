@@ -201,4 +201,21 @@ const bodyMapDict = {
   },
 };
 
+const muscleGroups = {};
+
+Object.values(bodyMapDict).forEach((item) => {
+  if (!muscleGroups[item.group]) {
+    muscleGroups[item.group] = { flag: item.flag };
+  }
+});
+
+const muscleGroupsArray = [];
+
+Object.values(bodyMapDict).forEach((item) => {
+  if (!muscleGroupsArray.find((group) => group.group === item.group)) {
+    muscleGroupsArray.push({ name: item.group, flag: item.flag });
+  }
+});
+
+export { muscleGroups, muscleGroupsArray };
 export default bodyMapDict;

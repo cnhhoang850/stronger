@@ -5,7 +5,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
-  Pressable,
   ActionSheetIOS,
   TextInput,
   Dimensions,
@@ -16,9 +15,13 @@ import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
-
 import { Card as PaperCard } from "react-native-paper";
 import { ThemedScrollView } from "@/components/ThemedScrollView";
+import { ContextMenuView, ContextMenuButton } from "react-native-ios-context-menu";
+import ContextMenuItem from "@/components/ContextMenuItem";
+import { muscleGroups, muscleGroupsArray } from "@/store/bodyMapDict";
+import equipments from "@/store/equipments";
+import ChipMenuItem from "@/components/ChipMenuItem";
 
 export default function EditModal() {
   const theme = useTheme();
@@ -72,9 +75,9 @@ export default function EditModal() {
 
   const initialState = {
     name: "",
-    equipment: "",
-    target: "",
-    secondary: "",
+    equipment: "None",
+    target: "None",
+    secondary: [],
     instructions: "",
   };
   // should use reducer here as an object can better modify multiple sections
@@ -87,12 +90,28 @@ export default function EditModal() {
       field,
       value,
     });
+    return;
   };
+
+  const touch = useRef(null);
+
+  const muscleMenuItems = Object.keys(muscleGroups).map((group, index) => ({
+    actionKey: `key-${index + 1}`,
+    actionTitle: group.charAt(0).toUpperCase() + group.slice(1),
+  }));
+
+  const equipmentMenuItems = Object.keys(equipments).map((equipment, index) => ({
+    actionKey: `key-${index + 1}`,
+    actionTitle: equipment.charAt(0).toUpperCase() + equipment.slice(1),
+  }));
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ThemedScrollView style={{ ...styles.modalContent, backgroundColor: theme.colors.elevation.level1 }}>
-        <PaperCard mode="contained" style={styles.cardContainer}>
+        <PaperCard
+          mode="contained"
+          style={{ ...styles.cardContainer, backgroundColor: theme.colors.elevation.onLevel1 }}
+        >
           <View
             style={{
               ...styles.cardRow,
@@ -111,37 +130,23 @@ export default function EditModal() {
           </View>
         </PaperCard>
 
-        <PaperCard mode="contained" style={styles.cardContainer}>
-          <View
-            style={{
-              ...styles.cardRow,
-            }}
-          >
-            <TextInput style={{ ...styles.input, color: theme.colors.onBackground }} value={"Equipment"} />
-          </View>
-          <View
-            style={{
-              ...styles.cardRow,
-            }}
-          >
-            <TextInput
-              style={{ ...styles.input, color: theme.colors.onBackground }}
-              value={"Target muscle"}
-            />
-          </View>
-
-          <View
-            style={{
-              ...styles.cardRow,
-              borderBottomWidth: 0,
-            }}
-          >
-            <TextInput
-              style={{ ...styles.input, color: theme.colors.onBackground }}
-              value={"Secondary muscle(s)"}
-            />
-          </View>
-        </PaperCard>
+        <ContextMenuItem
+          rowIndex="topRow"
+          title="Equipment"
+          value={formState.equipment}
+          field="equipment"
+          handleInput={handleInputChange}
+          menuItems={equipmentMenuItems}
+        />
+        <ContextMenuItem
+          rowIndex="middleRow"
+          title="Target muscle"
+          value={formState.target}
+          field="target"
+          handleInput={handleInputChange}
+          menuItems={muscleMenuItems}
+        />
+        <ChipMenuItem rowIndex="bottomRow" title="Secondary muscle(s)" chipItems={muscleGroupsArray} />
 
         <PaperCard mode="contained" style={styles.cardContainer}>
           <View
@@ -178,16 +183,14 @@ const styles = StyleSheet.create({
   modalContent: {
     height: "100%",
   },
-
   cardContainer: {
     padding: 2,
     paddingRight: 0,
     paddingLeft: 16,
-    marginBottom: 26,
     marginLeft: 16,
     marginRight: 16,
     marginTop: 16,
-    backgroundColor: "rgb(46,46,47)",
+    marginBottom: 24,
   },
   cardRow: {
     display: "flex",
