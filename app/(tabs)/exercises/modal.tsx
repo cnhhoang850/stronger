@@ -1,12 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useLayoutEffect,
-  useEffect,
-  Suspense,
-  lazy,
-  useReducer,
-} from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy, useReducer } from "react";
 import {
   StyleSheet,
   View,
@@ -19,20 +11,13 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import {
-  useNavigation,
-  useLocalSearchParams,
-  useGlobalSearchParams,
-} from "expo-router";
+import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import { Card as PaperCard } from "react-native-paper";
 import { ThemedScrollView } from "@/components/ThemedScrollView";
-import {
-  ContextMenuView,
-  ContextMenuButton,
-} from "react-native-ios-context-menu";
+import { ContextMenuView, ContextMenuButton } from "react-native-ios-context-menu";
 import ContextMenuItem from "@/components/ContextMenuItem";
 import { muscleGroups, muscleGroupsArray } from "@/store/bodyMapDict";
 import bodyMapDict from "@/store/bodyMapDict";
@@ -76,14 +61,43 @@ export default function EditModal() {
     };
   }, []);
 
-  const [val, setVa] = useState("");
-
   const formReducer = (state, action) => {
     switch (action.type) {
       case "SET_FIELD":
         return {
           ...state,
           [action.field]: action.value,
+        };
+      case "SET_SECONDARY":
+        let frontMuscles = action.value.front.map((muscle) => {
+          let { group } = bodyMapDict[muscle];
+          return { slug: group, intensity: 1 };
+        });
+
+        let backMuscles = action.value.back.map((muscle) => {
+          let { group } = bodyMapDict[muscle];
+          return { slug: group, intensity: 1 };
+        });
+
+        if (state.target !== "None") {
+          let { group, flag } = bodyMapDict[state.target];
+          let target = {
+            slug: group,
+            intensity: 2,
+          };
+
+          if (flag === "front") {
+            frontMuscles.push(target);
+          } else {
+            backMuscles.push(target);
+          }
+        }
+
+        return {
+          ...state,
+          [action.field]: action.value,
+          frontMuscles: frontMuscles,
+          backMuscles: backMuscles,
         };
       default:
         return state;
@@ -94,10 +108,14 @@ export default function EditModal() {
     name: "",
     equipment: "None",
     target: "None",
-    secondary: [],
+    secondary: {
+      front: [],
+      back: [],
+    },
+    frontMuscles: [],
+    backMuscles: [],
     instructions: "",
   };
-  // should use reducer here as an object can better modify multiple sections
 
   const [formState, dispatch] = useReducer(formReducer, initialState);
 
@@ -110,49 +128,12 @@ export default function EditModal() {
     return;
   };
 
-  const muscleMenuItems = Object.keys(muscleGroups).map((group, index) => ({
-    actionKey: `key-${index + 1}`,
-    actionTitle: group.charAt(0).toUpperCase() + group.slice(1),
-  }));
-
   const equipmentMenuItems = Object.keys(equipments).map((equipment, index) => ({
     actionKey: `key-${index + 1}`,
     actionTitle: equipment.charAt(0).toUpperCase() + equipment.slice(1),
   }));
 
-  const createMuscleMenuSections = (bodyMapDict) => {
-    const sections = {
-      front: [],
-      back: [],
-      both: [],
-    };
-
-    Object.keys(bodyMapDict).forEach((muscle, index) => {
-      const muscleData = bodyMapDict[muscle];
-      const { flag } = muscleData;
-
-      sections[flag].push({
-        actionKey: `key-${index + 1}`,
-        actionTitle: muscle, // Use the muscle name (property key) as the actionTitle
-      });
-    });
-
-    // Convert the sections object to an array of sections with menuTitle and menuItems
-    return Object.keys(sections)
-      .map((key) => ({
-        menuTitle: key.charAt(0).toUpperCase() + key.slice(1),
-        menuItems: sections[key],
-      }))
-      .filter((section) => section.menuItems.length > 0); // Filter out empty sections
-  };
-
   const muscleMenuSections = createMuscleMenuSections(bodyMapDict);
-
-  const muscleMapData = [];
-  const target = bodyMapDict[formState.target] || [];
-  const secondary = formState.secondary.map(
-    (muscle) => bodyMapDict[muscle] || [],
-  );
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -199,14 +180,14 @@ export default function EditModal() {
           }}
         >
           <Body
-            data={[]}
+            data={formState.frontMuscles}
             gender="male"
             side="front"
             scale={0.7}
             colors={["#0984e3", theme.colors.primary]}
           />
           <Body
-            data={[]}
+            data={formState.backMuscles}
             gender="male"
             side="back"
             scale={0.7}
@@ -304,3 +285,29 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
 });
+
+const createMuscleMenuSections = (bodyMapDict) => {
+  const sections = {
+    front: [],
+    back: [],
+    both: [],
+  };
+
+  Object.keys(bodyMapDict).forEach((muscle, index) => {
+    const muscleData = bodyMapDict[muscle];
+    const { flag } = muscleData;
+
+    sections[flag].push({
+      actionKey: `key-${index + 1}`,
+      actionTitle: muscle, // Use the muscle name (property key) as the actionTitle
+    });
+  });
+
+  // Convert the sections object to an array of sections with menuTitle and menuItems
+  return Object.keys(sections)
+    .map((key) => ({
+      menuTitle: key.charAt(0).toUpperCase() + key.slice(1),
+      menuItems: sections[key],
+    }))
+    .filter((section) => section.menuItems.length > 0); // Filter out empty sections
+};

@@ -12,17 +12,10 @@ type ContextMenuItemProps = {
   rowIndex: rowIndex;
   handleInput: (filed: string, value: string) => void;
   field: string;
-  chipItems: { name: string; flag: string }[];
+  chipItems: { name: string; flag: string; group: string }[];
 };
 
-const ChipMenuItem = ({
-  title,
-  value,
-  rowIndex,
-  handleInput,
-  field,
-  chipItems,
-}: ContextMenuItemProps) => {
+const ChipMenuItem = ({ title, value, rowIndex, handleInput, field, chipItems }: ContextMenuItemProps) => {
   const theme = useTheme();
   const [resetAll, setResetAll] = useState(false);
 

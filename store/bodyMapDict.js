@@ -209,13 +209,11 @@ Object.values(bodyMapDict).forEach((item) => {
   }
 });
 
-const muscleGroupsArray = [];
-
-Object.values(bodyMapDict).forEach((item) => {
-  if (!muscleGroupsArray.find((group) => group.group === item.group)) {
-    muscleGroupsArray.push({ name: item.group, flag: item.flag });
-  }
-});
+const muscleGroupsArray = Object.keys(bodyMapDict).map((key) => ({
+  name: key,
+  flag: bodyMapDict[key].flag,
+  group: bodyMapDict[key].group,
+}));
 
 export { muscleGroups, muscleGroupsArray };
 export default bodyMapDict;

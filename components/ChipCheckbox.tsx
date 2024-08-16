@@ -3,17 +3,9 @@ import { Chip, useTheme } from "react-native-paper";
 import { ThemedText } from "@/components/ThemedText";
 import { SFSymbol } from "@/components/SFSymbols";
 import { View, LayoutAnimation } from "react-native";
+import bodyMapDict from "@/store/bodyMapDict";
 
-const ChipCheckbox = ({
-  name,
-  selectedColor,
-  reset,
-  setReset,
-  value,
-  handleInput,
-  field,
-  ...props
-}) => {
+const ChipCheckbox = ({ name, selectedColor, reset, setReset, value, handleInput, field, ...props }) => {
   const [checked, setChecked] = useState(false);
   const theme = useTheme();
 
@@ -25,10 +17,34 @@ const ChipCheckbox = ({
       delete: { type: "linear", property: "opacity" },
     });
     setChecked(!checked);
-    let newValue = value.includes(name)
-      ? value.filter((item) => item === name)
-      : [...value, name];
-    console.log(value, newValue);
+    let meta = bodyMapDict[name];
+    let frontMuscles = value.front;
+    let backMuscles = value.back;
+
+    if (meta.flag === "front") {
+      frontMuscles = value.front.includes(name)
+        ? value.front.filter((item) => item === name)
+        : [...value.front, name];
+    } else if (meta.flag === "back") {
+      backMuscles = value.back.includes(name)
+        ? value.back.filter((item) => item === name)
+        : [...value.back, name];
+    } else if (meta.flag === "both") {
+      frontMuscles = value.front.includes(name)
+        ? value.front.filter((item) => item === name)
+        : [...value.front, name];
+      backMuscles = value.back.includes(name)
+        ? value.back.filter((item) => item === name)
+        : [...value.back, name];
+    }
+
+    let newValue = {
+      front: frontMuscles,
+      back: backMuscles,
+    };
+
+    console.log(newValue);
+
     handleInput(field, newValue);
   };
 
