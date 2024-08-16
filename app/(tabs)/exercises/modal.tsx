@@ -1,4 +1,12 @@
-import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy, useReducer } from "react";
+import React, {
+  useRef,
+  useState,
+  useLayoutEffect,
+  useEffect,
+  Suspense,
+  lazy,
+  useReducer,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -11,17 +19,26 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
+import {
+  useNavigation,
+  useLocalSearchParams,
+  useGlobalSearchParams,
+} from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import { Card as PaperCard } from "react-native-paper";
 import { ThemedScrollView } from "@/components/ThemedScrollView";
-import { ContextMenuView, ContextMenuButton } from "react-native-ios-context-menu";
+import {
+  ContextMenuView,
+  ContextMenuButton,
+} from "react-native-ios-context-menu";
 import ContextMenuItem from "@/components/ContextMenuItem";
 import { muscleGroups, muscleGroupsArray } from "@/store/bodyMapDict";
+import bodyMapDict from "@/store/bodyMapDict";
 import equipments from "@/store/equipments";
 import ChipMenuItem from "@/components/ChipMenuItem";
+import Body from "react-native-body-highlighter";
 
 export default function EditModal() {
   const theme = useTheme();
@@ -93,8 +110,6 @@ export default function EditModal() {
     return;
   };
 
-  const touch = useRef(null);
-
   const muscleMenuItems = Object.keys(muscleGroups).map((group, index) => ({
     actionKey: `key-${index + 1}`,
     actionTitle: group.charAt(0).toUpperCase() + group.slice(1),
@@ -105,12 +120,54 @@ export default function EditModal() {
     actionTitle: equipment.charAt(0).toUpperCase() + equipment.slice(1),
   }));
 
+  const createMuscleMenuSections = (bodyMapDict) => {
+    const sections = {
+      front: [],
+      back: [],
+      both: [],
+    };
+
+    Object.keys(bodyMapDict).forEach((muscle, index) => {
+      const muscleData = bodyMapDict[muscle];
+      const { flag } = muscleData;
+
+      sections[flag].push({
+        actionKey: `key-${index + 1}`,
+        actionTitle: muscle, // Use the muscle name (property key) as the actionTitle
+      });
+    });
+
+    // Convert the sections object to an array of sections with menuTitle and menuItems
+    return Object.keys(sections)
+      .map((key) => ({
+        menuTitle: key.charAt(0).toUpperCase() + key.slice(1),
+        menuItems: sections[key],
+      }))
+      .filter((section) => section.menuItems.length > 0); // Filter out empty sections
+  };
+
+  const muscleMenuSections = createMuscleMenuSections(bodyMapDict);
+
+  const muscleMapData = [];
+  const target = bodyMapDict[formState.target] || [];
+  const secondary = formState.secondary.map(
+    (muscle) => bodyMapDict[muscle] || [],
+  );
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ThemedScrollView style={{ ...styles.modalContent, backgroundColor: theme.colors.elevation.level1 }}>
+      <ThemedScrollView
+        style={{
+          ...styles.modalContent,
+          backgroundColor: theme.colors.elevation.level1,
+        }}
+      >
         <PaperCard
           mode="contained"
-          style={{ ...styles.cardContainer, backgroundColor: theme.colors.elevation.onLevel1 }}
+          style={{
+            ...styles.cardContainer,
+            backgroundColor: theme.colors.elevation.onLevel1,
+          }}
         >
           <View
             style={{
@@ -130,6 +187,33 @@ export default function EditModal() {
           </View>
         </PaperCard>
 
+        <View
+          style={{
+            backgroundColor: "transparent",
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
+            justifyContent: "space-around",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          <Body
+            data={[]}
+            gender="male"
+            side="front"
+            scale={0.7}
+            colors={["#0984e3", theme.colors.primary]}
+          />
+          <Body
+            data={[]}
+            gender="male"
+            side="back"
+            scale={0.7}
+            colors={["#0984e3", theme.colors.primary]}
+          />
+        </View>
+
         <ContextMenuItem
           rowIndex="topRow"
           title="Equipment"
@@ -144,9 +228,17 @@ export default function EditModal() {
           value={formState.target}
           field="target"
           handleInput={handleInputChange}
-          menuItems={muscleMenuItems}
+          menuItems={muscleMenuSections}
         />
-        <ChipMenuItem rowIndex="bottomRow" title="Secondary muscle(s)" chipItems={muscleGroupsArray} />
+
+        <ChipMenuItem
+          rowIndex="bottomRow"
+          title="Secondary muscle(s)"
+          chipItems={muscleGroupsArray}
+          value={formState.secondary}
+          field="secondary"
+          handleInput={handleInputChange}
+        />
 
         <PaperCard mode="contained" style={styles.cardContainer}>
           <View
@@ -166,7 +258,12 @@ export default function EditModal() {
             }}
           >
             <TextInput
-              style={{ ...styles.input, color: theme.colors.onBackground, height: 250, overflow: "scroll" }}
+              style={{
+                ...styles.input,
+                color: theme.colors.onBackground,
+                height: 250,
+                overflow: "scroll",
+              }}
               value={"Secondary muscle(s)"}
             />
           </View>

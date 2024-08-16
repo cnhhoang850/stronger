@@ -17,7 +17,14 @@ type ContextMenuItemProps = {
   menuItems: { actionKey: string; actionTitle: string }[];
 };
 
-const ContextMenuItem = ({ title, value, rowIndex, handleInput, field, menuItems }: ContextMenuItemProps) => {
+const ContextMenuItem = ({
+  title,
+  value,
+  rowIndex,
+  handleInput,
+  field,
+  menuItems,
+}: ContextMenuItemProps) => {
   const contextTouchAreaRef = useRef(null);
   const theme = useTheme();
 
@@ -56,7 +63,9 @@ const ContextMenuItem = ({ title, value, rowIndex, handleInput, field, menuItems
             }}
           ></ContextMenuButton>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <ThemedText style={{ color: theme.colors.elevation.onLevel2 }}>{value}</ThemedText>
+            <ThemedText style={{ color: theme.colors.elevation.onLevel2 }}>
+              {value}
+            </ThemedText>
             <SFSymbol
               style={{ width: 16, height: 16, marginRight: 16, marginLeft: 8 }}
               name={"chevron.up.chevron.down"}

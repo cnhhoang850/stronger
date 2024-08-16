@@ -56,6 +56,8 @@ export default function Details() {
   const frontMuscleData = mapMuscles(frontMuscles);
   const backMuscleData = mapMuscles(backMuscles);
 
+  console.log(frontMuscleData);
+
   const AnimatedExpoImage = Animated.createAnimatedComponent(ExpoImage);
 
   const renderHeaderImage = (() => (

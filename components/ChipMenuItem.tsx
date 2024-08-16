@@ -1,11 +1,8 @@
-import React, { useRef, memo } from "react";
-import { View, TouchableOpacity, Alert, StyleSheet, ScrollView } from "react-native";
+import React, { useRef, memo, useState } from "react";
+import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { ContextMenuButton } from "react-native-ios-context-menu";
 import { useTheme } from "react-native-paper";
-import { SFSymbol } from "@/components/SFSymbols";
-import { muscleGroupsArray } from "@/store/bodyMapDict";
-import { Chip } from "react-native-paper";
+import ChipCheckbox from "@/components/ChipCheckbox";
 
 type rowIndex = "topRow" | "middleRow" | "bottomRow";
 
@@ -18,9 +15,22 @@ type ContextMenuItemProps = {
   chipItems: { name: string; flag: string }[];
 };
 
-const ChipMenuItem = ({ title, value, rowIndex, handleInput, field, chipItems }: ContextMenuItemProps) => {
-  const contextTouchAreaRef = useRef(null);
+const ChipMenuItem = ({
+  title,
+  value,
+  rowIndex,
+  handleInput,
+  field,
+  chipItems,
+}: ContextMenuItemProps) => {
   const theme = useTheme();
+  const [resetAll, setResetAll] = useState(false);
+
+  const resetAllChips = () => {
+    setResetAll(true);
+    // Reset the reset state to false after resetting
+    setTimeout(() => setResetAll(false), 0);
+  };
 
   return (
     <>
@@ -33,21 +43,25 @@ const ChipMenuItem = ({ title, value, rowIndex, handleInput, field, chipItems }:
         <View
           style={{
             ...styles.contentContainer,
+            paddingRight: 16,
             borderBottomWidth: 1,
             borderStyle: "solid",
             borderBottomColor: "rgba(84, 84, 88, 0.65)",
           }}
         >
           <ThemedText>{title}</ThemedText>
-
-          <View style={{ flexDirection: "row", alignItems: "center" }}></View>
+          <TouchableOpacity onPress={resetAllChips}>
+            <ThemedText type="system" style={{ fontSize: 17 }}>
+              Reset
+            </ThemedText>
+          </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView
         style={{
           ...styles[rowIndex],
-          height: 200,
+          height: 300,
           backgroundColor: theme.colors.elevation.onLevel1,
         }}
       >
@@ -63,17 +77,16 @@ const ChipMenuItem = ({ title, value, rowIndex, handleInput, field, chipItems }:
         >
           {chipItems.map((item, index) => {
             return (
-              <Chip
-                selectedColor={theme.colors.primary}
-                mode="outlined"
+              <ChipCheckbox
                 key={index}
-                style={{ margin: 4 }}
-                onPress={(na) => {}}
-              >
-                <ThemedText type="menu" style={{ fontSize: 12 }}>
-                  {item.name}
-                </ThemedText>
-              </Chip>
+                name={item.name}
+                selectedColor={theme.colors.primary}
+                reset={resetAll}
+                setReset={setResetAll}
+                value={value}
+                handleInput={handleInput}
+                field={field}
+              />
             );
           })}
         </View>
