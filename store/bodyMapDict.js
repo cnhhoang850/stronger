@@ -5,7 +5,7 @@ const bodyMapDict = {
   },
   obliques: {
     group: "obliques",
-    flag: "both",
+    flag: "front",
   },
   "hip flexors": {
     group: "adductors",
@@ -37,15 +37,15 @@ const bodyMapDict = {
   },
   calves: {
     group: "calves",
-    flag: "both",
+    flag: "side",
   },
   "ankle stabilizers": {
     group: "ankles",
-    flag: "both",
+    flag: "side",
   },
   forearms: {
     group: "forearm",
-    flag: "both",
+    flag: "side",
   },
   pectorals: {
     group: "chest",
@@ -53,11 +53,11 @@ const bodyMapDict = {
   },
   triceps: {
     group: "triceps",
-    flag: "both",
+    flag: "back",
   },
   shoulders: {
     group: "deltoids",
-    flag: "both",
+    flag: "side",
   },
   core: {
     group: "abs",
@@ -77,7 +77,7 @@ const bodyMapDict = {
   },
   adductors: {
     group: "adductors",
-    flag: "front",
+    flag: "side",
   },
   chest: {
     group: "chest",
@@ -101,35 +101,35 @@ const bodyMapDict = {
   },
   delts: {
     group: "deltoids",
-    flag: "both",
+    flag: "side",
   },
   traps: {
     group: "trapezius",
-    flag: "both",
+    flag: "side",
   },
   trapezius: {
     group: "trapezius",
-    flag: "both",
+    flag: "side",
   },
   ankles: {
     group: "ankles",
-    flag: "both",
+    flag: "side",
   },
   feet: {
     group: "feet",
-    flag: "both",
+    flag: "side",
   },
   deltoids: {
     group: "deltoids",
-    flag: "both",
+    flag: "side",
   },
   "serratus anterior": {
     group: "chest",
-    flag: "front",
+    flag: "side",
   },
   brachialis: {
     group: "biceps",
-    flag: "front",
+    flag: "side",
   },
   groin: {
     group: "adductors",
@@ -137,11 +137,11 @@ const bodyMapDict = {
   },
   wrists: {
     group: "forearm",
-    flag: "both",
+    flag: "side",
   },
   "rotator cuff": {
     group: "deltoids",
-    flag: "both",
+    flag: "side",
   },
   "upper chest": {
     group: "chest",
@@ -153,11 +153,11 @@ const bodyMapDict = {
   },
   "wrist flexors": {
     group: "forearm",
-    flag: "both",
+    flag: "side",
   },
   "wrist extensors": {
     group: "forearm",
-    flag: "both",
+    flag: "side",
   },
   abdominals: {
     group: "abs",
@@ -165,7 +165,7 @@ const bodyMapDict = {
   },
   "grip muscles": {
     group: "forearm",
-    flag: "both",
+    flag: "side",
   },
   "lower abs": {
     group: "abs",
@@ -173,15 +173,15 @@ const bodyMapDict = {
   },
   "inner thighs": {
     group: "adductors",
-    flag: "front",
+    flag: "side",
   },
   soleus: {
     group: "calves",
-    flag: "both",
+    flag: "side",
   },
   abductors: {
     group: "adductors",
-    flag: "front",
+    flag: "side",
   },
   "levator scapulae": {
     group: "upper-back",
@@ -189,15 +189,15 @@ const bodyMapDict = {
   },
   sternocleidomastoid: {
     group: "neck",
-    flag: "both",
+    flag: "side",
   },
   hands: {
     group: "hands",
-    flag: "both",
+    flag: "side",
   },
   shins: {
     group: "tibialis",
-    flag: "both",
+    flag: "side",
   },
 };
 

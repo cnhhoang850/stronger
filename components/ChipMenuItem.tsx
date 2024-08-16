@@ -15,13 +15,25 @@ type ContextMenuItemProps = {
   chipItems: { name: string; flag: string; group: string }[];
 };
 
-const ChipMenuItem = ({ title, value, rowIndex, handleInput, field, chipItems }: ContextMenuItemProps) => {
+const ChipMenuItem = ({
+  title,
+  value,
+  rowIndex,
+  handleInput,
+  field,
+  chipItems,
+}: ContextMenuItemProps) => {
   const theme = useTheme();
   const [resetAll, setResetAll] = useState(false);
 
   const resetAllChips = () => {
     setResetAll(true);
     // Reset the reset state to false after resetting
+    handleInput("secondary", {
+      front: [],
+      back: [],
+      side: [],
+    });
     setTimeout(() => setResetAll(false), 0);
   };
 

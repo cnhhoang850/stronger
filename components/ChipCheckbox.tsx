@@ -5,9 +5,47 @@ import { SFSymbol } from "@/components/SFSymbols";
 import { View, LayoutAnimation } from "react-native";
 import bodyMapDict from "@/store/bodyMapDict";
 
-const ChipCheckbox = ({ name, selectedColor, reset, setReset, value, handleInput, field, ...props }) => {
+const ChipCheckbox = ({
+  name,
+  selectedColor,
+  reset,
+  setReset,
+  value,
+  handleInput,
+  field,
+  ...props
+}) => {
   const [checked, setChecked] = useState(false);
   const theme = useTheme();
+
+  const handleState = () => {
+    let meta = bodyMapDict[name];
+    let frontMuscles = value.front;
+    let backMuscles = value.back;
+    let sideMuscles = value.side;
+
+    if (meta.flag === "front") {
+      frontMuscles = value.front.includes(name)
+        ? value.front.filter((item) => item !== name)
+        : [...value.front, name];
+    } else if (meta.flag === "back") {
+      backMuscles = value.back.includes(name)
+        ? value.back.filter((item) => item !== name)
+        : [...value.back, name];
+    } else if (meta.flag === "side") {
+      sideMuscles = value.side.includes(name)
+        ? value.side.filter((item) => item !== name)
+        : [...value.side, name];
+    }
+
+    let newValue = {
+      front: frontMuscles,
+      back: backMuscles,
+      side: sideMuscles,
+    };
+
+    handleInput(field, newValue);
+  };
 
   const handlePress = () => {
     LayoutAnimation.configureNext({
@@ -17,35 +55,7 @@ const ChipCheckbox = ({ name, selectedColor, reset, setReset, value, handleInput
       delete: { type: "linear", property: "opacity" },
     });
     setChecked(!checked);
-    let meta = bodyMapDict[name];
-    let frontMuscles = value.front;
-    let backMuscles = value.back;
-
-    if (meta.flag === "front") {
-      frontMuscles = value.front.includes(name)
-        ? value.front.filter((item) => item === name)
-        : [...value.front, name];
-    } else if (meta.flag === "back") {
-      backMuscles = value.back.includes(name)
-        ? value.back.filter((item) => item === name)
-        : [...value.back, name];
-    } else if (meta.flag === "both") {
-      frontMuscles = value.front.includes(name)
-        ? value.front.filter((item) => item === name)
-        : [...value.front, name];
-      backMuscles = value.back.includes(name)
-        ? value.back.filter((item) => item === name)
-        : [...value.back, name];
-    }
-
-    let newValue = {
-      front: frontMuscles,
-      back: backMuscles,
-    };
-
-    console.log(newValue);
-
-    handleInput(field, newValue);
+    handleState();
   };
 
   useEffect(() => {

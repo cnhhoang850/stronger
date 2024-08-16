@@ -39,7 +39,7 @@ export default function Details() {
       frontMuscles.push(value);
     } else if (flag === "back") {
       backMuscles.push(value);
-    } else if (flag === "both") {
+    } else if (flag === "side") {
       frontMuscles.push(value);
       backMuscles.push(value);
     } else {
