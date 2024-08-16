@@ -1,12 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useLayoutEffect,
-  useEffect,
-  Suspense,
-  lazy,
-  useReducer,
-} from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect, Suspense, lazy, useReducer } from "react";
 import {
   StyleSheet,
   View,
@@ -19,20 +11,13 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import {
-  useNavigation,
-  useLocalSearchParams,
-  useGlobalSearchParams,
-} from "expo-router";
+import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import { Card as PaperCard } from "react-native-paper";
 import { ThemedScrollView } from "@/components/ThemedScrollView";
-import {
-  ContextMenuView,
-  ContextMenuButton,
-} from "react-native-ios-context-menu";
+import { ContextMenuView, ContextMenuButton } from "react-native-ios-context-menu";
 import ContextMenuItem from "@/components/ContextMenuItem";
 import { muscleGroups, muscleGroupsArray } from "@/store/bodyMapDict";
 import bodyMapDict from "@/store/bodyMapDict";
@@ -339,7 +324,7 @@ const createMuscleMenuSections = (bodyMapDict) => {
   const sections = {
     front: [],
     back: [],
-    side: [],
+    both: [],
   };
 
   Object.keys(bodyMapDict).forEach((muscle, index) => {
