@@ -16,11 +16,21 @@ import {
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useNavigation } from "expo-router";
+import { Button as PaperButton, useTheme } from "react-native-paper";
+import {
+  useNavigation,
+  useLocalSearchParams,
+  useGlobalSearchParams,
+} from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import { Card as PaperCard } from "react-native-paper";
 import { ThemedScrollView } from "@/components/ThemedScrollView";
+import {
+  ContextMenuView,
+  ContextMenuButton,
+} from "react-native-ios-context-menu";
 import ContextMenuItem from "@/components/ContextMenuItem";
 import { muscleGroupsArray } from "@/store/bodyMapDict";
 import bodyMapDict from "@/store/bodyMapDict";
@@ -353,7 +363,7 @@ const createMuscleMenuSections = (bodyMapDict) => {
   const sections = {
     front: [],
     back: [],
-    side: [],
+    both: [],
   };
 
   Object.keys(bodyMapDict).forEach((muscle, index) => {
