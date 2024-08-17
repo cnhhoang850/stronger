@@ -12,36 +12,26 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
-  TouchableOpacity,
-  ActionSheetIOS,
   TextInput,
-  Dimensions,
-  Modal,
 } from "react-native";
-import { Button as PaperButton, useTheme } from "react-native-paper";
-import {
-  useNavigation,
-  useLocalSearchParams,
-  useGlobalSearchParams,
-} from "expo-router";
+import { useTheme } from "react-native-paper";
+import { useNavigation } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
 import { Card as PaperCard } from "react-native-paper";
 import { ThemedScrollView } from "@/components/ThemedScrollView";
-import {
-  ContextMenuView,
-  ContextMenuButton,
-} from "react-native-ios-context-menu";
 import ContextMenuItem from "@/components/ContextMenuItem";
-import { muscleGroups, muscleGroupsArray } from "@/store/bodyMapDict";
+import { muscleGroupsArray } from "@/store/bodyMapDict";
 import bodyMapDict from "@/store/bodyMapDict";
 import equipments from "@/store/equipments";
 import ChipMenuItem from "@/components/ChipMenuItem";
 import Body from "react-native-body-highlighter";
+import { TouchableOpacity } from "react-native";
 
 export default function EditModal() {
   const theme = useTheme();
+  const navigation = useNavigation();
 
   // Update navigation header
   const offsetRef = useRef({ value: 0 });
@@ -75,6 +65,33 @@ export default function EditModal() {
       // Clean up code here, if necessary
     };
   }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <ThemedText
+          style={{
+            paddingRight: 6,
+          }}
+          type="system"
+          onPress={() => {
+            console.log("pressed");
+          }}
+        >
+          Add
+        </ThemedText>
+      ),
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <ThemedText type="system">Cancel</ThemedText>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const formReducer = (state, action) => {
     switch (action.type) {
@@ -178,8 +195,6 @@ export default function EditModal() {
 
   const muscleMenuSections = createMuscleMenuSections(bodyMapDict);
 
-  console.log(formState.target, formState.secondary);
-
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ThemedScrollView
@@ -281,20 +296,19 @@ export default function EditModal() {
 
           <View
             style={{
-              ...styles.cardRow,
               borderBottomWidth: 0,
               height: 250,
-              overflow: "scroll",
+              padding: 0,
             }}
           >
             <TextInput
               style={{
                 ...styles.input,
                 color: theme.colors.onBackground,
-                height: 250,
-                overflow: "scroll",
               }}
-              value={"Secondary muscle(s)"}
+              multiline={true}
+              value={formState.instructions}
+              onChangeText={(text) => handleInputChange("instructions", text)}
             />
           </View>
         </PaperCard>
