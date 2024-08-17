@@ -1079,6 +1079,8 @@ PODS:
     - Yoga
   - react-native-safe-area-context (4.10.1):
     - React-Core
+  - react-native-segmented-control (2.5.2):
+    - React-Core
   - react-native-sfsymbols (1.2.2):
     - React
   - React-nativeconfig (0.74.3)
@@ -1472,6 +1474,7 @@ DEPENDENCIES:
   - react-native-keyboard-controller (from `../node_modules/react-native-keyboard-controller`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-segmented-control (from `../node_modules/@react-native-segmented-control/segmented-control`)"
   - react-native-sfsymbols (from `../node_modules/react-native-sfsymbols`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1618,6 +1621,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-mmkv"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-segmented-control:
+    :path: "../node_modules/@react-native-segmented-control/segmented-control"
   react-native-sfsymbols:
     :path: "../node_modules/react-native-sfsymbols"
   React-nativeconfig:
@@ -1741,6 +1746,7 @@ SPEC CHECKSUMS:
   react-native-keyboard-controller: 07a457e3a882f85591f98034e6fcc930df9a8865
   react-native-mmkv: 8c9a677e64a1ac89b0c6cf240feea528318b3074
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
+  react-native-segmented-control: b92809e9111013dfa266e1168ba366d62898d9a4
   react-native-sfsymbols: ca90d8bb7d6ad06523bf833f2becae22b97fb056
   React-nativeconfig: fa5de9d8f4dbd5917358f8ad3ad1e08762f01dcb
   React-NativeModulesApple: 585d1b78e0597de364d259cb56007052d0bda5e5
