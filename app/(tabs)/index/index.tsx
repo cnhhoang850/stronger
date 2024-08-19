@@ -1,5 +1,5 @@
 import { useCallback, lazy, Suspense } from "react";
-import { StyleSheet, SectionList } from "react-native";
+import { StyleSheet, SectionList, ScrollView } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import storage from "@/store/LocalStore";
@@ -11,7 +11,6 @@ import LinkButton from "@/components/LinkButton";
 
 export default function HomeScreen() {
   const workouts = useStore((state) => state.workouts);
-  const groupedWorkouts = groupWorkoutsByMonth(workouts);
 
   const renderItem = useCallback(({ item }) => {
     return (
@@ -24,9 +23,9 @@ export default function HomeScreen() {
   storage.clearAll();
 
   return (
-    <ThemedView style={styles.sectionListContainer}>
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       <LinkButton path="/newWorkout" />
-    </ThemedView>
+    </ScrollView>
   );
 }
 
@@ -58,27 +57,3 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 });
-
-function groupWorkoutsByMonth(workouts) {
-  const groupedWorkouts = {};
-
-  workouts.forEach((workout) => {
-    if (!workout) return;
-
-    const date = new Date(workout.time);
-    const month = date.toLocaleString("default", { month: "long" });
-    const year = date.getFullYear();
-    const monthYear = `${month} ${year}`;
-
-    if (!groupedWorkouts[monthYear]) {
-      groupedWorkouts[monthYear] = [];
-    }
-
-    groupedWorkouts[monthYear].push(workout);
-  });
-
-  return Object.keys(groupedWorkouts).map((key) => ({
-    title: key,
-    data: groupedWorkouts[key],
-  }));
-}

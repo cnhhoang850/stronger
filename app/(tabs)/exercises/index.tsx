@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import useStore from "@/store/useStore";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, SafeAreaView } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useNavigation } from "expo-router";
@@ -11,6 +11,7 @@ import { FlashList } from "@shopify/flash-list";
 import { sort } from "fast-sort";
 import * as Haptics from "expo-haptics";
 import { SFSymbol } from "@/components/SFSymbols";
+import SegmentedControl from "@react-native-segmented-control/segmented-control";
 
 export default function App() {
   const theme = useTheme();
@@ -30,14 +31,7 @@ export default function App() {
       headerSearchBarOptions: {
         hideWhenScrolling: false,
         onChangeText: (event) => {
-          setExercisesState(
-            preprocessDataFlashList(
-              exerciseData,
-              event.nativeEvent.text,
-              filter,
-              sortOrder,
-            ),
-          );
+          setExercisesState(preprocessDataFlashList(exerciseData, event.nativeEvent.text, filter, sortOrder));
         },
       },
       headerRight: () => (
@@ -91,6 +85,10 @@ export default function App() {
       );
     }
 
+    if (item.name === "segmented") {
+      return <SegmentedControl values={["One", "Two"]} />;
+    }
+
     const source = `img${item.id}` as keyof typeof ExerciseImages;
     return <ExerciseListItem image={ExerciseImages[source]} exercise={item} />;
   };
@@ -104,24 +102,24 @@ export default function App() {
   };
 
   return (
-    <ThemedView
-      style={{ backgroundColor: theme.colors.background, height: "100%" }}
-    >
-      <FlashList
-        contentInsetAdjustmentBehavior="automatic"
-        data={exercisesState}
-        renderItem={flashListRender}
-        estimatedItemSize={76}
-        ItemSeparatorComponent={FlatlistItemSeparator}
-        getItemType={(item) => {
-          return typeof item === "string" ? "sectionHeader" : "row";
-        }}
-        contentContainerStyle={styles.sectionListContainer}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50,
-        }}
-      />
-    </ThemedView>
+    <SafeAreaView>
+      <ThemedView style={{ backgroundColor: theme.colors.background, height: "100%" }}>
+        <FlashList
+          contentInsetAdjustmentBehavior="automatic"
+          data={exercisesState}
+          renderItem={flashListRender}
+          estimatedItemSize={76}
+          ItemSeparatorComponent={FlatlistItemSeparator}
+          getItemType={(item) => {
+            return typeof item === "string" ? "sectionHeader" : "row";
+          }}
+          contentContainerStyle={styles.sectionListContainer}
+          viewabilityConfig={{
+            itemVisiblePercentThreshold: 50,
+          }}
+        />
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -153,8 +151,7 @@ const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   const sectionMap = {};
 
   filteredData.forEach((item) => {
-    const sectionKey =
-      filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
+    const sectionKey = filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
     if (!sectionMap[sectionKey]) {
       sectionMap[sectionKey] = [];
     }

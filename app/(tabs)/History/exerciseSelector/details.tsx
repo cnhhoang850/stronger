@@ -38,7 +38,7 @@ export default function Details() {
       frontMuscles.push(value);
     } else if (flag === "back") {
       backMuscles.push(value);
-    } else if (flag === "side") {
+    } else if (flag === "both") {
       frontMuscles.push(value);
       backMuscles.push(value);
     } else {
@@ -62,10 +62,7 @@ export default function Details() {
 
   const renderHeaderImage = (() => (
     <>
-      <AnimatedExpoImage
-        source={ExerciseWebps["webp" + id]}
-        style={{ width: 260, height: 260 }}
-      />
+      <AnimatedExpoImage source={ExerciseWebps["webp" + id]} style={{ width: 260, height: 260 }} />
     </>
   ))();
 
@@ -107,11 +104,7 @@ export default function Details() {
         </ThemedText>
         {secondaryMuscles.map((muscle) => {
           return (
-            <ThemedText
-              style={{ color: "rgba(64, 167, 235, 100)" }}
-              key={muscle}
-              type="subtitle"
-            >
+            <ThemedText style={{ color: "rgba(64, 167, 235, 100)" }} key={muscle} type="subtitle">
               {capitalizeFirstLetter(muscle)}
             </ThemedText>
           );
