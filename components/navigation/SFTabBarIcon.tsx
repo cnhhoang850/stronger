@@ -5,10 +5,10 @@ import { type ComponentProps } from "react";
 import { SymbolView, SymbolViewProps } from "expo-symbols";
 import { StyleSheet, View, Text } from "react-native";
 import { SFSymbol } from "@/components/SFSymbols";
-export function SFTabBarIcon({ style, ...rest }: IconProps<ComponentProps<typeof SymbolView>["name"]>) {
+export function SFTabBarIcon({ style, size, ...rest }: IconProps<ComponentProps<typeof SymbolView>["name"]>) {
   return (
     <Text style={styles.container}>
-      <SFSymbol style={[styles.symbol, style]} {...rest} type="monochrome" />
+      <SFSymbol style={[{ width: size, height: size }, style]} {...rest} type="monochrome" />
     </Text>
   );
 }
@@ -16,9 +16,5 @@ export function SFTabBarIcon({ style, ...rest }: IconProps<ComponentProps<typeof
 const styles = StyleSheet.create({
   container: {
     marginRight: 2.5,
-  },
-  symbol: {
-    width: 32,
-    height: 32,
   },
 });

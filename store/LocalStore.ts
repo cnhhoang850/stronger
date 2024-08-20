@@ -162,10 +162,11 @@ const mockWorkoutTemplate = {
   restTime: 60,
   location: "Home",
   date: new Date().getTime().toString(),
+  id: new Date().getTime().toString(),
 };
 
-storage.set(mockWorkoutTemplate.date, JSON.stringify(mockWorkoutTemplate));
-storage.set("templateKeys", JSON.stringify([mockWorkoutTemplate.date]));
+storage.set(mockWorkoutTemplate.id, JSON.stringify(mockWorkoutTemplate));
+storage.set("templateKeys", JSON.stringify([mockWorkoutTemplate.id]));
 
 function sleep(milliseconds) {
   const start = new Date().getTime();

@@ -10,7 +10,11 @@ import { SFSymbol } from "@/components/SFSymbols";
 import RoutineCard from "@/components/home/RoutineCard";
 const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
 
+import { Dimensions } from "react-native";
 import LinkButton from "@/components/LinkButton";
+
+const screenWidth = Dimensions.get("window").width;
+const CARD_WIDTH = (screenWidth - 64) / 2;
 
 export default function HomeScreen() {
   const nav = useNavigation();
@@ -43,16 +47,25 @@ export default function HomeScreen() {
   }, [nav]);
 
   const renderItem = useCallback(({ item }) => {
-    return (
-      <Suspense fallback={<WorkoutCardSuspense />}>
-        <WorkoutHistoryCard workout={item} />
-      </Suspense>
-    );
+    return <Suspense fallback={<WorkoutCardSuspense />}></Suspense>;
   }, []);
 
-  console.log(templates);
-
-  return <ScrollView contentInsetAdjustmentBehavior="automatic"></ScrollView>;
+  return (
+    <ScrollView
+      style={{
+        flex: 1,
+        flexDirection: "column",
+        flexWrap: "wrap",
+      }}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      {templates &&
+        templates.map((template) => {
+          console.log(template);
+          return <RoutineCard style={{ width: CARD_WIDTH }} template={template} />;
+        })}
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

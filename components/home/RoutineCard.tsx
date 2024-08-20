@@ -9,28 +9,19 @@ import IconText from "@/components/IconText";
 import useStore from "@/store/useStore";
 import ForwardButton from "@/components/ForwardButton";
 
-function RoutineCard({ workout }) {
+function RoutineCard({ template }) {
   return (
-    <PaperCard style={styles.cardContainer} mode="contained">
+    <PaperCard style={{ ...styles.cardContainer }} mode="contained">
       <PaperCard.Content>
         <View style={styles.headerContainer}>
-          <View>
-            <ThemedText type="defaultSemiBold">
-              {getWorkoutTimeCategory(workout.time)}
-            </ThemedText>
-
-            <ThemedText type="subtitle">{formatDate(workout.time)}</ThemedText>
-          </View>
-
-          <ForwardButton path="/(tabs)/history/modal" params={{ id: id }} />
+          <ForwardButton path="/(tabs)/history/modal" params={{ id: template.id }} />
         </View>
 
         <View style={styles.columnContainer}>
           <View style={styles.entryColumn}>
-            <IconText iconName="clock" text={formatDuration(workout.duration)} />
             <ThemedText type="subtitleSemiBold">{"Exercise"}</ThemedText>
 
-            {workout.exercises.map((exercise, index) => (
+            {template.exercises.map((exercise, index) => (
               <ThemedText key={index} type="defaultSemiTrans">
                 {exercise.name + " x " + exercise.sets.length + " sets"}
               </ThemedText>
@@ -49,7 +40,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: "5%",
     marginHorizontal: 16,
-    maxWidth: "45%",
   },
   headerContainer: {
     flex: 1,

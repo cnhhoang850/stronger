@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-
+import { View, Text, TouchableOpacity, Dimensions } from "react-native";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -10,7 +9,11 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const dimensions = Dimensions.get("window");
   const TAB_BAR_HEIGHT = 89;
+
+  const smallScreenOptions = dimensions.height < 700;
+
   return (
     <Tabs
       screenOptions={{
@@ -18,7 +21,7 @@ export default function TabLayout() {
         headerShown: false,
         unmountOnBlur: true,
         tabBarStyle: {
-          height: TAB_BAR_HEIGHT,
+          height: smallScreenOptions ? 49 : TAB_BAR_HEIGHT,
           shadowColor: "black",
           shadowOffset: {
             width: 10,
@@ -32,7 +35,7 @@ export default function TabLayout() {
           fontSize: 10,
         },
         tabBarItemStyle: {
-          marginTop: 8,
+          marginTop: smallScreenOptions ? 8 : 10,
         },
         headerShadowVisible: true,
         headerTransparent: true,
@@ -44,6 +47,7 @@ export default function TabLayout() {
           title: "History",
           tabBarIcon: ({ color, focused }) => (
             <SFTabBarIcon
+              size={smallScreenOptions ? 24 : 32}
               name={focused ? "clock.fill" : "clock"}
               color={focused ? "#007AFF" : "gray"}
             />
@@ -57,6 +61,7 @@ export default function TabLayout() {
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
             <SFTabBarIcon
+              size={smallScreenOptions ? 24 : 32}
               name={focused ? "house.fill" : "house"}
               color={focused ? "#007AFF" : "gray"}
             />
@@ -71,6 +76,7 @@ export default function TabLayout() {
           title: "Exercises",
           tabBarIcon: ({ color, focused }) => (
             <SFTabBarIcon
+              size={smallScreenOptions ? 24 : 32}
               name={"figure.run"}
               color={focused ? "#007AFF" : "gray"}
             />
