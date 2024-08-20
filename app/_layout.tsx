@@ -4,7 +4,10 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { MD3LightTheme as DefaultPaperTheme, PaperProvider } from "react-native-paper";
+import {
+  MD3LightTheme as DefaultPaperTheme,
+  PaperProvider,
+} from "react-native-paper";
 
 import { TouchableOpacity } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -12,7 +15,6 @@ import { useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ExerciseListItem from "@/components/MinimizedWorkout";
 import LinkButton from "@/components/LinkButton";
-import { useNavigation } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -136,12 +138,12 @@ export default function RootLayout() {
     return null;
   }
 
-  const navigation = useNavigation();
-
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <PaperProvider theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}>
+        <PaperProvider
+          theme={colorScheme === "dark" ? darkPaperTheme : paperTheme}
+        >
           <Stack
             screenOptions={{
               headerStyle: {
@@ -154,22 +156,12 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="newWorkout" options={{ headerShown: false, presentation: "modal" }} />
+            <Stack.Screen
+              name="newWorkout"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
-
-          <TouchableOpacity onPress={() => navigation.navigate("newWorkout")}>
-            <ThemedText
-              style={{
-                position: "absolute",
-                bottom: 100,
-                color: "white",
-                fontSize: 20,
-              }}
-            >
-              kdjsa;lkfsa
-            </ThemedText>
-          </TouchableOpacity>
         </PaperProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

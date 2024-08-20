@@ -21,7 +21,7 @@ export default function HomeLayout() {
         options={{
           headerShown: true,
           headerLargeTitle: true,
-          headerTitle: "History",
+          headerTitle: "Home",
           headerTransparent: true,
           headerBlurEffect: "regular",
         }}

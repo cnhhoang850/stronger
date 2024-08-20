@@ -1,16 +1,46 @@
-import { useCallback, lazy, Suspense } from "react";
+import { useCallback, lazy, Suspense, useLayoutEffect } from "react";
 import { StyleSheet, SectionList, ScrollView } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import storage from "@/store/LocalStore";
 import useStore from "@/store/useStore";
 import WorkoutCardSuspense from "@/components/WorkoutCardSuspense";
+import { useNavigation } from "expo-router";
+import { SFSymbol } from "@/components/SFSymbols";
+import RoutineCard from "@/components/home/RoutineCard";
 const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
 
 import LinkButton from "@/components/LinkButton";
 
 export default function HomeScreen() {
-  const workouts = useStore((state) => state.workouts);
+  const nav = useNavigation();
+  const templates = useStore((state) => state.templates);
+
+  useLayoutEffect(() => {
+    nav.setOptions({
+      headerSearchBarOptions: {
+        hideWhenScrolling: false,
+      },
+      headerRight: () => (
+        <ThemedText
+          style={{
+            paddingRight: 6,
+          }}
+          type="system"
+          onPress={() => {
+            nav.navigate("modal");
+          }}
+        >
+          <SFSymbol name="plus" size={24} style={{ width: 32, height: 32 }} />
+        </ThemedText>
+      ),
+      headerLeft: () => (
+        <ThemedText type="system" onPress={() => {}}>
+          Edit
+        </ThemedText>
+      ),
+    });
+  }, [nav]);
 
   const renderItem = useCallback(({ item }) => {
     return (
@@ -20,13 +50,9 @@ export default function HomeScreen() {
     );
   }, []);
 
-  storage.clearAll();
+  console.log(templates);
 
-  return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <LinkButton path="/newWorkout" />
-    </ScrollView>
-  );
+  return <ScrollView contentInsetAdjustmentBehavior="automatic"></ScrollView>;
 }
 
 const styles = StyleSheet.create({

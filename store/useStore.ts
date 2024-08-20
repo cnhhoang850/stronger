@@ -38,24 +38,43 @@ const loadWorkouts = () => {
     .filter((workout) => workout !== null); // Filter out any null workouts
 };
 
+const loadTemplates = () => {
+  let keys = storage.getString("templateKeys");
+  if (!keys) {
+    return [];
+  }
+  keys = JSON.parse(keys);
+  return keys.map((key) => {
+    const template = storage.getString(key);
+    if (!template) {
+      return null;
+    }
+    const templateObj = JSON.parse(template);
+    return templateObj;
+  });
+};
+
+const updateWorkout = (id, newWorkout) => {
+  set((state) => {
+    const updatedWorkouts = state.workouts.map((workout) => {
+      if (workout.id === id) {
+        // Update workout in local storage
+        // please add error handling when not finding id
+        storage.set(id, JSON.stringify(newWorkout));
+        return newWorkout;
+      }
+      return workout;
+    });
+    return { workouts: updatedWorkouts };
+  });
+};
+
 const useStore = create((set) => ({
   currentWorkout: {},
+  templates: loadTemplates(),
   exercises: loadExercises(),
   workouts: loadWorkouts(),
-  updateWorkout: (id, newWorkout) => {
-    set((state) => {
-      const updatedWorkouts = state.workouts.map((workout) => {
-        if (workout.id === id) {
-          // Update workout in local storage
-          // please add error handling when not finding id
-          storage.set(id, JSON.stringify(newWorkout));
-          return newWorkout;
-        }
-        return workout;
-      });
-      return { workouts: updatedWorkouts };
-    });
-  },
+  updateWorkout: (id, newWorkout) => updateWorkout(id, newWorkout),
   setWorkouts: (workouts) => set({ workouts }),
 }));
 

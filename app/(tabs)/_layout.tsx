@@ -43,7 +43,10 @@ export default function TabLayout() {
         options={{
           title: "History",
           tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon name={focused ? "clock.fill" : "clock"} color={focused ? "#007AFF" : "gray"} />
+            <SFTabBarIcon
+              name={focused ? "clock.fill" : "clock"}
+              color={focused ? "#007AFF" : "gray"}
+            />
           ),
           unmountOnBlur: true,
         }}
@@ -53,7 +56,10 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon name={focused ? "house.fill" : "house"} color={focused ? "#007AFF" : "gray"} />
+            <SFTabBarIcon
+              name={focused ? "house.fill" : "house"}
+              color={focused ? "#007AFF" : "gray"}
+            />
           ),
           unmountOnBlur: true,
         }}
@@ -64,7 +70,10 @@ export default function TabLayout() {
         options={{
           title: "Exercises",
           tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon name={"figure.run"} color={focused ? "#007AFF" : "gray"} />
+            <SFTabBarIcon
+              name={"figure.run"}
+              color={focused ? "#007AFF" : "gray"}
+            />
           ),
           unmountOnBlur: true,
         }}

@@ -31,7 +31,14 @@ export default function App() {
       headerSearchBarOptions: {
         hideWhenScrolling: false,
         onChangeText: (event) => {
-          setExercisesState(preprocessDataFlashList(exerciseData, event.nativeEvent.text, filter, sortOrder));
+          setExercisesState(
+            preprocessDataFlashList(
+              exerciseData,
+              event.nativeEvent.text,
+              filter,
+              sortOrder,
+            ),
+          );
         },
       },
       headerRight: () => (
@@ -103,7 +110,9 @@ export default function App() {
 
   return (
     <SafeAreaView>
-      <ThemedView style={{ backgroundColor: theme.colors.background, height: "100%" }}>
+      <ThemedView
+        style={{ backgroundColor: theme.colors.background, height: "100%" }}
+      >
         <FlashList
           contentInsetAdjustmentBehavior="automatic"
           data={exercisesState}
@@ -151,7 +160,8 @@ const preprocessDataFlashList = (data, searchVal, filterBy, sortOrder) => {
   const sectionMap = {};
 
   filteredData.forEach((item) => {
-    const sectionKey = filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
+    const sectionKey =
+      filterBy === "muscle" ? item.target : item.name[0].toUpperCase();
     if (!sectionMap[sectionKey]) {
       sectionMap[sectionKey] = [];
     }

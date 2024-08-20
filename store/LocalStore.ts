@@ -87,6 +87,86 @@ const mockWorkout = {
   ],
 };
 
+const mockWorkoutTemplate = {
+  name: "Workout Template",
+  exercises: [
+    {
+      name: "Pushups",
+      sets: [
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+      ],
+    },
+    {
+      name: "Pullups",
+      sets: [
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+      ],
+    },
+    {
+      name: "Pullups",
+      sets: [
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+      ],
+    },
+    {
+      name: "Pullups",
+      sets: [
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+        {
+          reps: 10,
+          weight: 100,
+        },
+      ],
+    },
+  ],
+  restTime: 60,
+  location: "Home",
+  date: new Date().getTime().toString(),
+};
+
+storage.set(mockWorkoutTemplate.date, JSON.stringify(mockWorkoutTemplate));
+storage.set("templateKeys", JSON.stringify([mockWorkoutTemplate.date]));
+
 function sleep(milliseconds) {
   const start = new Date().getTime();
   while (new Date().getTime() - start < milliseconds) {}
