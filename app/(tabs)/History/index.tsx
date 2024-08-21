@@ -1,11 +1,12 @@
 import { useCallback, lazy, Suspense } from "react";
-import { StyleSheet, SectionList } from "react-native";
+import { StyleSheet, SectionList, View } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import storage from "@/store/LocalStore";
 import useStore from "@/store/useStore";
 import WorkoutCardSuspense from "@/components/WorkoutCardSuspense";
 const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
+import { ContextMenuView } from "react-native-ios-context-menu";
 
 export default function HomeScreen() {
   const workouts = useStore((state) => state.workouts);
@@ -14,7 +15,29 @@ export default function HomeScreen() {
   const renderItem = useCallback(({ item }) => {
     return (
       <Suspense fallback={<WorkoutCardSuspense />}>
-        <WorkoutHistoryCard workout={item} />
+        <ContextMenuView
+          menuConfig={{
+            menuTitle: "",
+            menuItems: [
+              {
+                actionKey: "delete",
+                actionTitle: "Delete",
+                menuTitle: "Options",
+              },
+            ],
+          }}
+          previewConfig={{
+            previewType: "CUSTOM",
+            backgroundColor: "black",
+          }}
+          renderPreview={() => (
+            <View
+              style={{ height: 100, width: 100, backgroundColor: "white" }}
+            ></View>
+          )}
+        >
+          <WorkoutHistoryCard workout={item} />
+        </ContextMenuView>
       </Suspense>
     );
   }, []);
@@ -28,7 +51,9 @@ export default function HomeScreen() {
         keyExtractor={(item, index) => item + index}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
-          <ThemedView style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}>
+          <ThemedView
+            style={{ paddingTop: 6, paddingBottom: 12, paddingLeft: 16 }}
+          >
             <ThemedText type="subtitle">{title}</ThemedText>
           </ThemedView>
         )}

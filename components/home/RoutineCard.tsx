@@ -8,39 +8,86 @@ import { ThemedText } from "@/components/ThemedText";
 import IconText from "@/components/IconText";
 import useStore from "@/store/useStore";
 import ForwardButton from "@/components/ForwardButton";
+import { ContextMenuView } from "react-native-ios-context-menu";
+import { useTheme } from "react-native-paper";
+import ExerciseImages from "@/assets/exercises/images";
+import ExerciseListItem from "@/components/ExerciseListItem";
 
-function RoutineCard({ template }) {
+function RoutineCard({ template, style, ...rest }) {
+  const theme = useTheme();
+  const exerciseData = useStore((state) => state.exercises);
+
   return (
-    <PaperCard style={{ ...styles.cardContainer }} mode="contained">
+    <ContextMenuView
+      style={{
+        borderRadius: 16,
+        marginRight: 16,
+        marginBottom: 16,
+      }}
+      menuConfig={{
+        menuTitle: "",
+      }}
+      previewConfig={{
+        previewType: "CUSTOM",
+        isResizeAnimated: true,
+      }}
+      renderPreview={() => <RoutineCardPreview template={template} />}
+    >
+      <PaperCard style={{ ...styles.cardContainer, ...style }} mode="contained">
+        <PaperCard.Content>
+          <View style={styles.headerContainer}>
+            <ForwardButton
+              path="/(tabs)/history/modal"
+              params={{ id: template.id }}
+            />
+          </View>
+
+          <View style={styles.columnContainer}>
+            <View style={styles.entryColumn}>
+              <ThemedText type="subtitleSemiBold">{"Exercise"}</ThemedText>
+
+              {template.exercises.map((exercise, index) => (
+                <ThemedText key={index} type="defaultSemiTrans">
+                  {exercise.name + " x " + exercise.sets.length + " sets"}
+                </ThemedText>
+              ))}
+            </View>
+          </View>
+        </PaperCard.Content>
+      </PaperCard>
+    </ContextMenuView>
+  );
+}
+
+const RoutineCardPreview = ({ template }) => {
+  return (
+    <PaperCard style={{ width: 400, borderRadius: 12 }} mode="contained">
       <PaperCard.Content>
-        <View style={styles.headerContainer}>
-          <ForwardButton path="/(tabs)/history/modal" params={{ id: template.id }} />
-        </View>
+        <View style={styles.headerContainer}></View>
 
         <View style={styles.columnContainer}>
           <View style={styles.entryColumn}>
             <ThemedText type="subtitleSemiBold">{"Exercise"}</ThemedText>
 
-            {template.exercises.map((exercise, index) => (
-              <ThemedText key={index} type="defaultSemiTrans">
-                {exercise.name + " x " + exercise.sets.length + " sets"}
-              </ThemedText>
-            ))}
+            {template.exercises.map((exercise, index) => {
+              const source = `img${exercise.id}`;
+              return (
+                <ExerciseListItem
+                  exercise={exercise}
+                  image={ExerciseImages[source]}
+                />
+              );
+            })}
           </View>
         </View>
       </PaperCard.Content>
     </PaperCard>
   );
-}
+};
 
 export default memo(RoutineCard);
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    flex: 1,
-    marginBottom: "5%",
-    marginHorizontal: 16,
-  },
   headerContainer: {
     flex: 1,
     flexDirection: "row",

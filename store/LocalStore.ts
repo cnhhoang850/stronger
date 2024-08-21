@@ -87,86 +87,268 @@ const mockWorkout = {
   ],
 };
 
-const mockWorkoutTemplate = {
-  name: "Workout Template",
-  exercises: [
-    {
-      name: "Pushups",
-      sets: [
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-      ],
-    },
-    {
-      name: "Pullups",
-      sets: [
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-      ],
-    },
-    {
-      name: "Pullups",
-      sets: [
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-      ],
-    },
-    {
-      name: "Pullups",
-      sets: [
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-        {
-          reps: 10,
-          weight: 100,
-        },
-      ],
-    },
-  ],
-  restTime: 60,
-  location: "Home",
-  date: new Date().getTime().toString(),
-  id: new Date().getTime().toString(),
-};
+const mockWorkoutTemplates = [
+  {
+    name: "Workout Template",
+    exercises: [
+      {
+        name: "Pushups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ],
+    restTime: 60,
+    location: "Home",
+    date: new Date().getTime().toString(),
+    id: new Date().getTime().toString(),
+  },
+  {
+    name: "Workout Template",
+    exercises: [
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ],
+    restTime: 60,
+    location: "Home",
+    date: new Date().getTime().toString() + "a",
+    id: new Date().getTime().toString() + "a",
+  },
 
-storage.set(mockWorkoutTemplate.id, JSON.stringify(mockWorkoutTemplate));
-storage.set("templateKeys", JSON.stringify([mockWorkoutTemplate.id]));
+  {
+    name: "Workout Template",
+    exercises: [
+      {
+        id: "0651",
+        name: "Pushups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+      {
+        id: "0651",
+        name: "Pullups",
+        target: "Lats",
+        sets: [
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+          {
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ],
+    restTime: 60,
+    location: "Home",
+    date: new Date().getTime().toString() + "a",
+    id: new Date().getTime().toString() + "a",
+  },
+];
+
+const templateKeys = [];
+mockWorkoutTemplates.forEach((mockWorkoutTemplate) => {
+  storage.set(mockWorkoutTemplate.id, JSON.stringify(mockWorkoutTemplate));
+  templateKeys.push(mockWorkoutTemplate.id);
+});
+
+storage.set("templateKeys", JSON.stringify(templateKeys));
 
 function sleep(milliseconds) {
   const start = new Date().getTime();

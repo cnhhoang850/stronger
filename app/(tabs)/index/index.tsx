@@ -1,5 +1,11 @@
 import { useCallback, lazy, Suspense, useLayoutEffect } from "react";
-import { StyleSheet, SectionList, ScrollView } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  SectionList,
+  ScrollView,
+  View,
+} from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import storage from "@/store/LocalStore";
@@ -10,7 +16,6 @@ import { SFSymbol } from "@/components/SFSymbols";
 import RoutineCard from "@/components/home/RoutineCard";
 const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
 
-import { Dimensions } from "react-native";
 import LinkButton from "@/components/LinkButton";
 
 const screenWidth = Dimensions.get("window").width;
@@ -19,6 +24,7 @@ const CARD_WIDTH = (screenWidth - 64) / 2;
 export default function HomeScreen() {
   const nav = useNavigation();
   const templates = useStore((state) => state.templates);
+  const CARD_WIDTH = (Dimensions.get("window").width - 64) / 2;
 
   useLayoutEffect(() => {
     nav.setOptions({
@@ -51,19 +57,26 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <ScrollView
-      style={{
-        flex: 1,
-        flexDirection: "column",
-        flexWrap: "wrap",
-      }}
-      contentInsetAdjustmentBehavior="automatic"
-    >
-      {templates &&
-        templates.map((template) => {
-          console.log(template);
-          return <RoutineCard style={{ width: CARD_WIDTH }} template={template} />;
-        })}
+    <ScrollView style={{}} contentInsetAdjustmentBehavior="automatic">
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          height: "100%",
+          width: "100%",
+          paddingLeft: 16,
+          marginTop: 32,
+        }}
+      >
+        {templates &&
+          templates.map((template) => {
+            console.log(template);
+            return (
+              <RoutineCard style={{ width: CARD_WIDTH }} template={template} />
+            );
+          })}
+      </View>
     </ScrollView>
   );
 }
