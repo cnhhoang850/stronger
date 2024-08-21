@@ -1,11 +1,5 @@
 import { useCallback, lazy, Suspense, useLayoutEffect } from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  SectionList,
-  ScrollView,
-  View,
-} from "react-native";
+import { Dimensions, StyleSheet, SectionList, ScrollView, View } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import storage from "@/store/LocalStore";
@@ -70,11 +64,8 @@ export default function HomeScreen() {
         }}
       >
         {templates &&
-          templates.map((template) => {
-            console.log(template);
-            return (
-              <RoutineCard style={{ width: CARD_WIDTH }} template={template} />
-            );
+          templates.map((template, index) => {
+            return <RoutineCard key={index} style={{ width: CARD_WIDTH }} template={template} />;
           })}
       </View>
     </ScrollView>

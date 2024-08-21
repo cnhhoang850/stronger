@@ -54,27 +54,25 @@ const loadTemplates = () => {
   });
 };
 
-const updateWorkout = (id, newWorkout) => {
-  set((state) => {
-    const updatedWorkouts = state.workouts.map((workout) => {
-      if (workout.id === id) {
-        // Update workout in local storage
-        // please add error handling when not finding id
-        storage.set(id, JSON.stringify(newWorkout));
-        return newWorkout;
-      }
-      return workout;
-    });
-    return { workouts: updatedWorkouts };
-  });
-};
-
 const useStore = create((set) => ({
   currentWorkout: {},
   templates: loadTemplates(),
   exercises: loadExercises(),
   workouts: loadWorkouts(),
-  updateWorkout: (id, newWorkout) => updateWorkout(id, newWorkout),
+  updateWorkout: (id, newWorkout) => {
+    set((state) => {
+      const updatedWorkouts = state.workouts.map((workout) => {
+        if (workout.id === id) {
+          // Update workout in local storage
+          // please add error handling when not finding id
+          storage.set(id, JSON.stringify(newWorkout));
+          return newWorkout;
+        }
+        return workout;
+      });
+      return { workouts: updatedWorkouts };
+    });
+  },
   setWorkouts: (workouts) => set({ workouts }),
 }));
 
