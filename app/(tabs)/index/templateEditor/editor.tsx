@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import { useNavigation, useLocalSearchParams, useGlobalSearchParams, Link } from "expo-router";
+import { useNavigation, useLocalSearchParams, useGlobalSearchParams, Link, useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
@@ -22,6 +22,7 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 const ExerciseDataTable = lazy(() => import("@/components/editModal/ExerciseDataTable"));
 import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditModal() {
   const { id: forwardedTemplateId } = useLocalSearchParams();
@@ -38,6 +39,7 @@ export default function EditModal() {
 
   let scrollViewRef = useRef(null);
   const navigation = useNavigation();
+  const router = useRouter();
   const theme = useTheme();
   const params = useGlobalSearchParams();
 
@@ -149,8 +151,7 @@ export default function EditModal() {
   };
 
   const showSelector = () => {
-    console.log("pressed");
-    navigation.navigate("/(tabs)/index/exerciseSelector");
+    navigation.navigate("selector");
   };
 
   const addSelectedExercise = async (exercises) => {
@@ -248,13 +249,12 @@ export default function EditModal() {
                 alignItems: "center",
               }}
             >
-              <Link href="exerciseSelector">
-                <ThemedText>+Add Exercise</ThemedText>
-              </Link>
+              <ThemedText>+Add Exercise</ThemedText>
             </TouchableOpacity>
           )}
           // some error made this fail? new arch?
           contentContainerStyle={{ paddingBottom: 200 }}
+          ListHeaderComponent={() => <View style={{ flex: 1, paddingBottom: 32 }}></View>}
           ref={scrollViewRef}
           onref={(ref) => (scrollViewRef = ref)}
           contentInsetAdjustmentBehavior="automatic"

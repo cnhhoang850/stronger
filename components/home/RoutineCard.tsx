@@ -33,7 +33,7 @@ function RoutineCard({ template, style, ...rest }) {
       <PaperCard style={{ ...styles.cardContainer, ...style }} mode="contained">
         <PaperCard.Content>
           <View style={styles.headerContainer}>
-            <ForwardButton path="/templateEditor" params={{ id: template.id }} />
+            <ForwardButton path="/templateEditor/editor" params={{ id: template.id }} />
           </View>
 
           <View style={styles.columnContainer}>

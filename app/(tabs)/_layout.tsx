@@ -84,20 +84,6 @@ export default function TabLayout() {
           unmountOnBlur: true,
         }}
       />
-      <Tabs.Screen
-        name="draggable"
-        options={{
-          title: "Drag",
-          tabBarIcon: ({ color, focused }) => (
-            <SFTabBarIcon
-              size={smallScreenOptions ? 24 : 32}
-              name={"figure.run"}
-              color={focused ? "#007AFF" : "gray"}
-            />
-          ),
-          unmountOnBlur: true,
-        }}
-      />
     </Tabs>
   );
 }

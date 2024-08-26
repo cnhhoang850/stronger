@@ -14,10 +14,12 @@ export default function HomeLayout() {
       }}
     >
       <Stack.Screen
-        name="index"
+        name="editor"
         options={{
           title: "Edit template",
           headerLargeTitle: false,
+          headerTransparent: true,
+          headerBlurEffect: "regular",
           headerTitle: (props) => <CustomTitle title={"Select exercises"} />,
         }}
       />
