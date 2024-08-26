@@ -1,8 +1,9 @@
-import { Stack } from "expo-router";
+import { Stack, useGlobalSearchParams } from "expo-router";
 import { useTheme } from "react-native-paper";
 import { Appearance } from "react-native";
 
 export default function HomeLayout() {
+  const params = useGlobalSearchParams();
   const { colors } = useTheme();
   return (
     <Stack
@@ -24,6 +25,17 @@ export default function HomeLayout() {
           headerTitle: "Home",
           headerTransparent: true,
           headerBlurEffect: "regular",
+        }}
+      />
+      <Stack.Screen
+        name="templateEditor"
+        options={{
+          headerShown: false,
+          headerLargeTitle: true,
+          headerTitle: "Start workout",
+          headerTransparent: true,
+          headerBlurEffect: "regular",
+          presentation: "modal",
         }}
       />
     </Stack>

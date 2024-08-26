@@ -19,25 +19,37 @@ function RoutineCard({ template, style, ...rest }) {
   const contextTouchAreaRef = useRef(null);
 
   return (
-    <PaperCard style={{ ...styles.cardContainer, ...style }} mode="contained">
-      <PaperCard.Content>
-        <View style={styles.headerContainer}>
-          <ForwardButton path="/(tabs)/history/modal" params={{ id: template.id }} />
-        </View>
-
-        <View style={styles.columnContainer}>
-          <View style={styles.entryColumn}>
-            <ThemedText type="subtitleSemiBold">{"Exercise"}</ThemedText>
-
-            {template.exercises.map((exercise, index) => (
-              <ThemedText key={index} type="defaultSemiTrans">
-                {exercise.name + " x " + exercise.sets.length + " sets"}
-              </ThemedText>
-            ))}
+    <ContextMenuView
+      menuConfig={{
+        menuTitle: "",
+        menuItems: [
+          {
+            actionKey: "delete",
+            actionTitle: "Delete",
+          },
+        ],
+      }}
+    >
+      <PaperCard style={{ ...styles.cardContainer, ...style }} mode="contained">
+        <PaperCard.Content>
+          <View style={styles.headerContainer}>
+            <ForwardButton path="/templateEditor" params={{ id: template.id }} />
           </View>
-        </View>
-      </PaperCard.Content>
-    </PaperCard>
+
+          <View style={styles.columnContainer}>
+            <View style={styles.entryColumn}>
+              <ThemedText type="subtitleSemiBold">{"Exercise"}</ThemedText>
+
+              {template.exercises.map((exercise, index) => (
+                <ThemedText key={index} type="defaultSemiTrans">
+                  {exercise.name + " x " + exercise.sets.length + " sets"}
+                </ThemedText>
+              ))}
+            </View>
+          </View>
+        </PaperCard.Content>
+      </PaperCard>
+    </ContextMenuView>
   );
 }
 

@@ -57,6 +57,20 @@ const loadTemplates = () => {
 const useStore = create((set) => ({
   currentWorkout: {},
   templates: loadTemplates(),
+  updateTemplate: (id, newTemplate) => {
+    set((state) => {
+      const updatedTemplates = state.templates.map((template) => {
+        if (template.id === id) {
+          // Update template in local storage
+          // please add error handling when not finding id
+          storage.set(id, JSON.stringify(newTemplate));
+          return newTemplate;
+        }
+        return template;
+      });
+      return { templates: updatedTemplates };
+    });
+  },
   exercises: loadExercises(),
   workouts: loadWorkouts(),
   updateWorkout: (id, newWorkout) => {
