@@ -41,6 +41,13 @@ export default function EditModal() {
   const theme = useTheme();
   const params = useGlobalSearchParams();
 
+  const initialState = {
+    ...workoutData,
+  };
+
+  console.log(initialState);
+
+  // receiving selections from selector
   React.useEffect(() => {
     if (params?.selectedExercises && params.selectedExercises.length > 0) {
       const selectedExercises = JSON.parse(params.selectedExercises);
@@ -189,9 +196,44 @@ export default function EditModal() {
       ...workoutFormData.current,
       exercises: updatedExercises,
     };
-    setWorkoutFormState({ ...workoutFormData.current, exercises: updatedExercises });
+    setWorkoutFormState({
+      ...workoutFormData.current,
+      exercises: updatedExercises,
+    });
     setFormChanged(true);
   };
+
+  const handleDragListItem = (data) => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const newWorkout = {
+      ...workoutFormData.current,
+      exercises: data,
+    };
+    workoutFormData.current = newWorkout;
+    setWorkoutFormState(newWorkout);
+    setFormChanged(true);
+  };
+
+  const dragListItemHaptics = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+  };
+
+  const renderListFooterComponent = () => (
+    <TouchableOpacity
+      onPress={showSelector}
+      style={{
+        backgroundColor: theme.colors.surface,
+        padding: 16,
+        margin: 16,
+        borderRadius: 8,
+        alignItems: "center",
+      }}
+    >
+      <ThemedText>+Add Exercise</ThemedText>
+    </TouchableOpacity>
+  );
+
+  const renderListHeaderComponent = () => <SettingCard workout={workoutFormState} />;
 
   useEffect(() => {
     return () => {
@@ -227,52 +269,28 @@ export default function EditModal() {
   };
 
   return (
-    <ThemedView style={styles.modalContent}>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <ThemedView style={styles.modalContent}>
         <DraggableFlatList
-          renderItem={renderItem}
-          keyExtractor={(item, index) => item.id} //for animated.view
-          ListFooterComponent={() => (
-            <TouchableOpacity
-              onPress={showSelector}
-              style={{
-                backgroundColor: theme.colors.surface,
-                padding: 16,
-                margin: 16,
-                borderRadius: 8,
-                alignItems: "center",
-              }}
-            >
-              <ThemedText>+Add Exercise</ThemedText>
-            </TouchableOpacity>
-          )}
-          ListHeaderComponent={() => <SettingCard workout={workoutFormState} />} // some error made this fail? new arch?
-          contentContainerStyle={{ paddingBottom: 200 }}
           ref={scrollViewRef}
           onref={(ref) => (scrollViewRef = ref)}
+          renderItem={renderItem}
+          ListHeaderComponent={renderListHeaderComponent} // some error made this fail? new arch?
+          ListFooterComponent={renderListFooterComponent}
+          // why fadeOut is normal, not called on change here?
+          keyExtractor={(item, index) => item.id} //for animated.view, remove uncessary reredner animation
+          contentContainerStyle={{ paddingBottom: 200 }}
           contentInsetAdjustmentBehavior="automatic"
           data={[...workoutFormState.exercises]} // mockup to add metadata card
-          onDragEnd={({ data }) => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            const newWorkout = {
-              ...workoutFormData.current,
-              exercises: data,
-            };
-            workoutFormData.current = newWorkout;
-            setWorkoutFormState(newWorkout);
-            setFormChanged(true);
-          }}
-          onPlaceholderIndexChange={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
-          }}
+          onDragEnd={({ data }) => handleDragListItem(data)}
+          onPlaceholderIndexChange={dragListItemHaptics}
           onScrollOffsetChange={(e) => {
             offsetRef.current.value = e;
           }}
         />
-      </TouchableWithoutFeedback>
-
-      <View style={{ flex: 1, paddingBottom: 200 }}></View>
-    </ThemedView>
+        <View style={{ flex: 1, paddingBottom: 200 }}></View>
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 }
 

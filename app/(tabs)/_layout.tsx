@@ -1,10 +1,9 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { SFTabBarIcon } from "@/components/navigation/SFTabBarIcon";
+import { SFTabBarIcon } from "@/components/SFTabBarIcon";
 import { useNavigation } from "@react-navigation/native";
 
 export default function TabLayout() {

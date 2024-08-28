@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import { Button as PaperButton, useTheme } from "react-native-paper";
-import { useNavigation, useLocalSearchParams, useGlobalSearchParams, Link, useRouter } from "expo-router";
+import { useNavigation, useLocalSearchParams, useGlobalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useStore from "@/store/useStore";
@@ -22,24 +22,22 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 const ExerciseDataTable = lazy(() => import("@/components/editModal/ExerciseDataTable"));
 import ExercideDataTableSuspense from "@/components/editModal/ExerciseDataTableSuspense";
 import * as Haptics from "expo-haptics";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditModal() {
-  const { id: forwardedTemplateId } = useLocalSearchParams();
-  const templateId = useRef(forwardedTemplateId).current;
-  const { templates } = useStore();
+  const { id: forwardedWorkoutId } = useLocalSearchParams();
+  const workoutId = useRef(forwardedWorkoutId).current;
+  const { workouts } = useStore();
 
-  let templateData = templates.find((template) => template.id === templateId);
-  const [templateFormState, setTemplateFormState] = useState(templateData);
-  const templateFormData = useRef(templateData);
-  const updateWorkout = useStore((state) => state.updateTemplate);
-
+  let workoutData = workouts.find((workout) => workout.id === workoutId);
+  const [workoutFormState, setWorkoutFormState] = useState(workoutData);
+  const workoutFormData = useRef(workoutData);
+  const updateWorkout = useStore((state) => state.updateWorkout);
   const [formChanged, setFormChanged] = useState(false);
+
   const selectedExerciseId = useRef(null);
 
   let scrollViewRef = useRef(null);
   const navigation = useNavigation();
-  const router = useRouter();
   const theme = useTheme();
   const params = useGlobalSearchParams();
 
@@ -49,7 +47,6 @@ export default function EditModal() {
       addSelectedExercise(selectedExercises);
     }
   }, [params?.selectedExercises]);
-  // Received workouts to add
 
   // Update navigation header
   useLayoutEffect(() => {
@@ -113,11 +110,10 @@ export default function EditModal() {
     });
     return () => listener.remove();
   }, []);
-  // Keyboard avoiding draggable list
 
   const handleSave = () => {
-    console.log(templateFormState, workoutId);
-    const newWorkout = { ...templateFormData.current };
+    console.log(workoutFormState, workoutId);
+    const newWorkout = { ...workoutFormData.current };
     updateWorkout(workoutId, newWorkout);
     setFormChanged(false);
   };
@@ -125,39 +121,52 @@ export default function EditModal() {
   const handleFormChange = (newExercise) => {
     setFormChanged(true);
 
-    const newExercises = templateFormData.current.exercises.map((exercise) =>
+    const newExercises = workoutFormData.current.exercises.map((exercise) =>
       exercise.id === newExercise.id ? newExercise : exercise,
     );
 
-    templateFormData.current = {
-      ...templateFormData.current,
+    workoutFormData.current = {
+      ...workoutFormData.current,
       exercises: newExercises,
     };
-    setTemplateFormState({ ...templateFormData.current });
+    setWorkoutFormState({ ...workoutFormData.current });
+  };
+
+  const openContextMenu = (exerciseId, event, fadeOut) => {
+    selectedExerciseId.current = exerciseId;
+    const selectedExercise = workoutFormState.exercises.find((exercise) => exercise.id === exerciseId);
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Delete", "Rename", "Remove all sets", "Cancel"],
+        title: "Edit " + selectedExercise.name,
+        destructiveButtonIndex: 0,
+        cancelButtonIndex: 3,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          fadeOut(deleteExercise);
+        } else if (buttonIndex === 1) {
+        }
+      },
+    );
   };
 
   const deleteExercise = () => {
-    const newExercises = templateFormData.current.exercises.filter(
+    const newExercises = workoutFormData.current.exercises.filter(
       (exercise) => exercise.id !== selectedExerciseId.current,
     );
-    console.log(
-      templateFormData.current.exercises.length,
-      "CURRENT",
-      newExercises.lenght,
-      "NEW",
-      selectedExerciseId.current,
-    );
-    templateFormData.current = {
-      ...templateFormData.current,
+    workoutFormData.current = {
+      ...workoutFormData.current,
       exercises: newExercises,
     };
-    const newWorkout = { ...templateFormState, exercises: newExercises };
-    setTemplateFormState(newWorkout);
+    const newWorkout = { ...workoutFormState, exercises: newExercises };
+    setWorkoutFormState(newWorkout);
     setFormChanged(true);
+    //setMenuVisible(false);
   };
 
   const showSelector = () => {
-    navigation.navigate("selector");
+    navigation.navigate("exerciseSelector");
   };
 
   const addSelectedExercise = async (exercises) => {
@@ -174,33 +183,14 @@ export default function EditModal() {
       await new Promise((resolve) => setTimeout(resolve, 50));
     }
 
-    const updatedExercises = [...templateFormData.current.exercises, ...newExercises];
+    const updatedExercises = [...workoutFormData.current.exercises, ...newExercises];
 
-    templateFormData.current = {
-      ...templateFormData.current,
+    workoutFormData.current = {
+      ...workoutFormData.current,
       exercises: updatedExercises,
     };
-    setTemplateFormState({ ...templateFormData.current, exercises: updatedExercises });
+    setWorkoutFormState({ ...workoutFormData.current, exercises: updatedExercises });
     setFormChanged(true);
-  };
-
-  const openContextMenu = (exerciseId, event, fadeOut) => {
-    selectedExerciseId.current = exerciseId;
-    const selectedExercise = templateFormState.exercises.find((exercise) => exercise.id === exerciseId);
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ["Delete", "Rename", "Remove all sets", "Cancel"],
-        title: "Edit " + selectedExercise.name,
-        destructiveButtonIndex: 0,
-        cancelButtonIndex: 3,
-      },
-      (buttonIndex) => {
-        if (buttonIndex === 0) {
-          fadeOut(deleteExercise);
-        } else if (buttonIndex === 1) {
-        }
-      },
-    );
   };
 
   useEffect(() => {
@@ -258,21 +248,20 @@ export default function EditModal() {
               <ThemedText>+Add Exercise</ThemedText>
             </TouchableOpacity>
           )}
-          // some error made this fail? new arch?
+          ListHeaderComponent={() => <SettingCard workout={workoutFormState} />} // some error made this fail? new arch?
           contentContainerStyle={{ paddingBottom: 200 }}
-          ListHeaderComponent={() => <View style={{ flex: 1, paddingBottom: 32 }}></View>}
           ref={scrollViewRef}
           onref={(ref) => (scrollViewRef = ref)}
           contentInsetAdjustmentBehavior="automatic"
-          data={[...templateFormState.exercises]} // mockup to add metadata card
+          data={[...workoutFormState.exercises]} // mockup to add metadata card
           onDragEnd={({ data }) => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             const newWorkout = {
-              ...templateFormData.current,
+              ...workoutFormData.current,
               exercises: data,
             };
-            templateFormData.current = newWorkout;
-            setTemplateFormState(newWorkout);
+            workoutFormData.current = newWorkout;
+            setWorkoutFormState(newWorkout);
             setFormChanged(true);
           }}
           onPlaceholderIndexChange={() => {

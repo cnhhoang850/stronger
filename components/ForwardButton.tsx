@@ -3,7 +3,7 @@ import { useTheme } from "react-native-paper";
 import { ThemedText } from "@/components/ThemedText";
 import React from "react";
 import { Link } from "expo-router";
-import { SFTabBarIcon } from "@/components/navigation/SFTabBarIcon";
+import { SFTabBarIcon } from "@/components/SFTabBarIcon";
 
 export default function ForwardButton(props) {
   const { colors: paperColors } = useTheme();
@@ -26,11 +26,7 @@ export default function ForwardButton(props) {
           alignContent: "center",
         }}
       >
-        <SFTabBarIcon
-          style={{ width: 24, height: 24 }}
-          name={"chevron.right"}
-          color={paperColors.primary}
-        />
+        <SFTabBarIcon style={{ width: 24, height: 24 }} name={"chevron.right"} color={paperColors.primary} />
       </Pressable>
     </Link>
   );

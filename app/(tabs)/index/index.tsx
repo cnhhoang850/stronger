@@ -7,18 +7,15 @@ import useStore from "@/store/useStore";
 import WorkoutCardSuspense from "@/components/WorkoutCardSuspense";
 import { useNavigation } from "expo-router";
 import { SFSymbol } from "@/components/SFSymbols";
-import RoutineCard from "@/components/home/RoutineCard";
+import RoutineCard from "@/components/RoutineCard";
 const WorkoutHistoryCard = lazy(() => import("@/components/WorkoutHistoryCard"));
 
 import LinkButton from "@/components/LinkButton";
 
-const screenWidth = Dimensions.get("window").width;
-const CARD_WIDTH = (screenWidth - 64) / 2;
-
 export default function HomeScreen() {
   const nav = useNavigation();
   const templates = useStore((state) => state.templates);
-  const CARD_WIDTH = (Dimensions.get("window").width - 64) / 2;
+  const CARD_WIDTH = (Dimensions.get("window").width - 48) / 2;
 
   useLayoutEffect(() => {
     nav.setOptions({
@@ -60,6 +57,8 @@ export default function HomeScreen() {
           height: "100%",
           width: "100%",
           paddingLeft: 16,
+          paddingRight: 0,
+          margin: 0,
           marginTop: 32,
         }}
       >
