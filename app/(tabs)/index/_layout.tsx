@@ -28,6 +28,16 @@ export default function HomeLayout() {
         }}
       />
       <Stack.Screen
+        name="modal"
+        options={{
+          headerShown: true,
+          headerLargeTitle: true,
+          headerTitle: "Home",
+          headerTransparent: true,
+          headerBlurEffect: "regular",
+        }}
+      />
+      <Stack.Screen
         name="templateEditor"
         options={{
           headerShown: false,
